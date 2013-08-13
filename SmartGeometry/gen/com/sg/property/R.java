@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.sg.main;
+package com.sg.property;
 
 public final class R {
     public static final class attr {

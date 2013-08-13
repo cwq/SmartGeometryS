@@ -1,7 +1,5 @@
 package com.sg.main;
 
-import com.sg.logic.common.CommonFunc;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -34,9 +32,9 @@ public class Magnifier {
 	public void Init() {
 		mPath.addCircle(RADIUS, RADIUS, RADIUS, Direction.CW);
 		matrix.setScale(FACTOR, FACTOR);
-		this.width = CommonFunc.getDriverWidth();
-		this.height = CommonFunc.getDriverHeight();
-		//bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.show);
+		//this.width = CommonFunc.getDriverWidth();
+		//this.height = CommonFunc.getDriverHeight();
+
 		bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		cacheCanvas = new Canvas();
 		cacheCanvas.setBitmap(bitmap);

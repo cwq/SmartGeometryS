@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.VectorFunc;
@@ -57,7 +58,7 @@ public abstract class Graph implements Cloneable, Serializable {
 		id = new Date().getTime();
 		checked = false;
 		isClosed = false;
-		graph = new ArrayList<GUnit>();
+		graph = new Vector<GUnit>();//ArrayList
 		isGraphConstrainted = false;
 		//translationStratery = new LineStrategy();
 	}

@@ -7,24 +7,23 @@ package com.sg.control;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.Log;
-
 import com.sg.object.graph.Graph;
 import com.sg.property.tools.Painter;
 
 public class GraphControl {
 	
-	private List<Graph> graphList;
+	private ConcurrentHashMap<Long,Graph> graphList;
+	
 	private Painter painter;
 	private Painter checkedPainter;
 	
 	
 	public GraphControl(List<Graph> graphList, int color, float width) {
-		this.graphList = graphList;
+		this.graphList = new ConcurrentHashMap<Long,Graph>();
 		painter = new Painter(color, width);
 		checkedPainter = new Painter(Color.RED, width);
 	}
@@ -32,7 +31,7 @@ public class GraphControl {
 	/*
 	 * 在画板canvas上绘制对象列表
 	 * */
-	public void drawObjList(Canvas canvas) {
+	public void drawObjList(List<Graph> graphList, Canvas canvas) {
 		//int size = graphList.size();
 		//canvas.drawText("同步", 0, 2, 10, 10, checkedPainter.getPaint());
 		//Log.v("size1", graphList.size() + "");
@@ -75,17 +74,10 @@ public class GraphControl {
 	/*
 	 * 添加对象到绘制列表
 	 * */
-	public void addObj(Graph graph) {
-		if(graph != null && !graphList.contains(graph)) {
-			graphList.add(graph);
+	public void addGraph(Graph graph) {
+		if(graph != null && !graphList.containsKey(graph.getID())) {
+			graphList.put(graph.getID(), graph);
 		}
-	}
-	
-	/*
-	 * 返回绘制对象列表
-	 * */
-	public List<Graph> getGraphList() {
-		return graphList;
 	}
 
 }

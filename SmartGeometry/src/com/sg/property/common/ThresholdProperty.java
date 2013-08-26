@@ -56,8 +56,8 @@ public class ThresholdProperty {
 		DRAW_WIDTH = 3 * density;
 		MAGNIFIER_RADUIS = 80 * density;
 		LINE_DISTANCE = 15 * density;
-		TRI_WIDTH = (int) (300 * density);
-		REC_WIDTH = (int) (510 * density);
+		TRI_WIDTH = (int) (200 * density);
+		REC_WIDTH = (int) (350 * density);
 		POP_HEIGTH = (int) (70 * density);
 		BUTTON_WIDTH = (int) (95 * density);
 	}

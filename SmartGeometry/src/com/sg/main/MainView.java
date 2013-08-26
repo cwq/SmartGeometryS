@@ -199,7 +199,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 		//graphControl.drawObj(curGraph, canvas); // 绘制当前勾画的草图
 		//Log.v("draw size", graphList.size() + "");
-		graphControl.drawObjList(canvas); // 绘制已有的图像对象列表
+		graphControl.drawObjList(graphList, canvas); // 绘制已有的图像对象列表
 
 		Canvas tCanvas = mHolder.lockCanvas();  // 锁定画布，一般在锁定后就可以通过其返回的画布对象Canvas，在其上面画图等操作了
 		if(tCanvas == null) {

@@ -99,9 +99,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         	isBluetoothAvailable = false;
         } else {
         	isBluetoothAvailable = true;
-            if (!mBluetoothAdapter.isEnabled()) {
-            	mBluetoothAdapter.enable();
-        	}
+//            if (!mBluetoothAdapter.isEnabled()) {
+//            	mBluetoothAdapter.enable();
+//        	}
         }
         
         mBluetoothService = new BluetoothService(mHandler);
@@ -235,10 +235,15 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             Toast.makeText(this, "蓝牙不可用", Toast.LENGTH_SHORT).show();
         } else {
         	if (!mBluetoothAdapter.isEnabled()) {
+//        		Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//        	    startActivityForResult(enableBtIntent, 1);
             	mBluetoothAdapter.enable();
         	}
+//        	if (!mBluetoothAdapter.isEnabled()) {
+//        		return;
+//        	}
         	while(!mBluetoothAdapter.isEnabled()) {
-        		
+
         	}
         	if(mBluetoothService == null || mBluetoothService.getState() == BluetoothService.STATE_NONE
         			|| mBluetoothService.getState() == BluetoothService.STATE_LISTEN) {

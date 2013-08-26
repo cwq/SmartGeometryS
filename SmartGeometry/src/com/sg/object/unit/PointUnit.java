@@ -90,8 +90,10 @@ public class PointUnit extends GUnit {
 
 	@Override
 	public void draw(Canvas canvas, Painter painter) {
-		if(!isInLine)
+		if(!isInLine) {
 			canvas.drawCircle(this.x, this.y, painter.getWidth()/2, painter.getPaint());
+			canvas.drawCircle(this.x, this.y, painter.getWidth()/4, painter.getPaint());
+		}
 	}
 
 	/*

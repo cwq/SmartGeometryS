@@ -3,6 +3,7 @@ package com.sg.main;
 import com.sg.bluetooth.BluetoothService;
 import com.sg.bluetooth.DeviceListActivity;
 import com.sg.bluetooth.SynchronousThread;
+import com.sg.control.UndoRedoSolver;
 import com.sg.logic.common.CommonFunc;
 import com.sg.property.R;
 import com.sg.property.common.ThresholdProperty;
@@ -26,11 +27,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableLayout;
@@ -119,6 +122,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     
     private void initMenu() {
     	mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
+    	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ThresholdProperty.BUTTON_WIDTH, LayoutParams.WRAP_CONTENT);
     	undo = (RadioButton)findViewById(R.id.undo);
     	redo = (RadioButton)findViewById(R.id.redo);
     	clear = (RadioButton)findViewById(R.id.clear);
@@ -126,6 +130,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     	open = (RadioButton)findViewById(R.id.open);
     	bluetooth = (RadioButton)findViewById(R.id.bluetooth);
     	exit = (RadioButton)findViewById(R.id.exit);
+    	undo.setLayoutParams(params);
+    	redo.setLayoutParams(params);
+    	clear.setLayoutParams(params);
+    	save.setLayoutParams(params);
+    	open.setLayoutParams(params);
+    	bluetooth.setLayoutParams(params);
+    	exit.setLayoutParams(params);
  		mHorizontalScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
         mRadioGroup.setOnCheckedChangeListener(this);
     }

@@ -31,43 +31,43 @@
 			>
 				<RadioButton
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/undo"
 					android:id="@+id/undo"
 				/>
 				<RadioButton 
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/redo"
 					android:id="@+id/redo"
 				/>
 				<RadioButton 
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/clear"
 					android:id="@+id/clear"
 				/>
 				<RadioButton
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/save"
 					android:id="@+id/save"
 				/>
 				<RadioButton 
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/open"
 					android:id="@+id/open"
 				/>
 				<RadioButton
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/bluetooth"
 					android:id="@+id/bluetooth"
 				/>
 				<RadioButton
 					style="@style/radioButton"
-					android:layout_width="95dp"
+					
 					android:drawableTop="@drawable/exit"
 					android:id="@+id/exit"
 				/>

@@ -18,11 +18,12 @@ import com.sg.object.unit.GUnit;
 import com.sg.object.unit.LineUnit;
 import com.sg.object.unit.PointUnit;
 import com.sg.object.Point;
+import com.sg.property.common.ThresholdProperty;
 
 public class LinearCloseConstraint {
 	
-	private int twoPointDistance = 30;
-	private int lineDistance = 15;
+	private double twoPointDistance = ThresholdProperty.TWO_POINT_IS_CONSTRAINTED;
+	private double lineDistance = ThresholdProperty.LINE_DISTANCE;
 	private boolean MedianLineConstraint = false;
 	private boolean VerticalLineCostraint = false;
 	private boolean AngleBisectorConstraint = false;

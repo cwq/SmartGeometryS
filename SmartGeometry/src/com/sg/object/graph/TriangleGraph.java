@@ -9,6 +9,7 @@ import com.sg.object.Point;
 import com.sg.object.unit.GUnit;
 import com.sg.object.unit.PointUnit;
 import com.sg.object.unit.LineUnit;
+import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
 import android.graphics.Canvas;
@@ -91,7 +92,7 @@ public class TriangleGraph extends Graph implements Serializable{
 						PointUnit point2 = (PointUnit)units.get(j);	 //point2,point3分别为底边顶点
 						PointUnit point3 = (PointUnit)units.get(k);
 						
-						Painter specialPainter = new Painter(Color.BLUE, 2);
+						Painter specialPainter = new Painter(Color.BLUE, ThresholdProperty.DRAW_WIDTH-1);
 						
 						switch(((LineUnit)unit).getType()){
 							case 1:{			//画图结构temp为垂足。

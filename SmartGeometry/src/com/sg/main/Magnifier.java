@@ -1,6 +1,7 @@
 package com.sg.main;
 
 import com.sg.logic.common.CommonFunc;
+import com.sg.property.common.ThresholdProperty;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,7 +18,7 @@ public class Magnifier {
 	private Matrix matrix = new Matrix();
 	private Bitmap bitmap;
 	//放大镜的半径
-	private static final int RADIUS = 80;
+	private static final float RADIUS = ThresholdProperty.MAGNIFIER_RADUIS;
 	//放大倍数
 	private static final int FACTOR = 2;
 	private int mCurrentX, mCurrentY;
@@ -74,7 +75,7 @@ public class Magnifier {
 		if(start)
 		{
 			//剪切s
-			int X, Y;
+			float X, Y;
 			if(mCurrentX < 2 * RADIUS && mCurrentY < 2 * RADIUS)
 			{
 				X = width - 2 * RADIUS;

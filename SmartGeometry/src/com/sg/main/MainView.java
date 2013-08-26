@@ -193,7 +193,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 		super.onDraw(canvas);
 		canvas.drawColor(Color.WHITE);         //画背景色
-		GraphControl graphControl = new GraphControl(graphList, color, width);
+		GraphControl graphControl = new GraphControl(graphList, color, ThresholdProperty.DRAW_WIDTH);
 		if(curGraph instanceof Sketch){
 			graphControl.drawObj(curGraph, canvas); // 绘制当前勾画的草图
 		}

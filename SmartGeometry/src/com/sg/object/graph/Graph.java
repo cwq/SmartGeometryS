@@ -10,6 +10,7 @@ import com.sg.logic.common.VectorFunc;
 import com.sg.logic.strategy.TranslationStratery;
 import com.sg.object.Point;
 import com.sg.object.unit.*;
+import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
 import android.graphics.Canvas;
@@ -76,7 +77,7 @@ public abstract class Graph implements Cloneable, Serializable {
 		//画直角，等腰标记
 		size = points.size(); //点元数
 		
-		Painter specialPainter = new Painter(Color.BLUE, 2);
+		Painter specialPainter = new Painter(Color.BLUE, ThresholdProperty.DRAW_WIDTH-1);
 		
 		for(int num = 0; num < size; num++){
 			PointUnit pointUnit = points.get(num);			

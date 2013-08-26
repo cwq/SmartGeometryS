@@ -16,6 +16,7 @@ import com.sg.object.unit.GUnit;
 import com.sg.object.unit.LineUnit;
 import com.sg.object.unit.PointUnit;
 import com.sg.property.R;
+import com.sg.property.common.ThresholdProperty;
 
 import android.content.Context;
 import android.util.Log;
@@ -58,7 +59,7 @@ public class UserIntentionReasoning {
 		myGraph = graph;
 		if(graph instanceof TriangleGraph && !((TriangleGraph) graph).isCurveConstrainted()){
 			popView =  mLayoutInflater.inflate(R.layout.popup_for_tri, null);
-			mPop = new PopupWindow(popView, 300, 70);
+			mPop = new PopupWindow(popView, ThresholdProperty.TRI_WIDTH, ThresholdProperty.POP_HEIGTH);
 			mPop.setOutsideTouchable(true);
 			popView.findViewById(R.id.isoceles_tri).setOnClickListener(
 					new View.OnClickListener()
@@ -182,7 +183,7 @@ public class UserIntentionReasoning {
 		}
 		if(graph instanceof RectangleGraph){
 			popView =  mLayoutInflater.inflate(R.layout.popup_for_rect, null);
-			mPop = new PopupWindow(popView, 510, 70);
+			mPop = new PopupWindow(popView, ThresholdProperty.REC_WIDTH, ThresholdProperty.POP_HEIGTH);
 			mPop.setOutsideTouchable(true);
 			popView.findViewById(R.id.parallelogram).setOnClickListener(
 					new View.OnClickListener()
@@ -495,7 +496,7 @@ public class UserIntentionReasoning {
 		//是三角形 并且约束线不是中位线
 		if(graph instanceof TriangleGraph && constraintLine.getType() != 2){
 			popView =  mLayoutInflater.inflate(R.layout.popup_for_tri_constrain, null);
-			mPop = new PopupWindow(popView, 300, 70);
+			mPop = new PopupWindow(popView, ThresholdProperty.TRI_WIDTH, ThresholdProperty.POP_HEIGTH);
 			mPop.setOutsideTouchable(true);
 			popView.findViewById(R.id.vertical_line).setOnClickListener(
 					new View.OnClickListener()

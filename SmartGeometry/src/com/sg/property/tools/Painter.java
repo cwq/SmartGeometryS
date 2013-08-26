@@ -6,9 +6,9 @@ public class Painter {
 	
 	private Paint paint;
 	private int color;
-	private int width;
+	private float width;
 	
-	public Painter(int color, int width) {
+	public Painter(int color, float width) {
 		this.paint = new Paint();
 		this.color = color;
 		this.width = width;
@@ -32,12 +32,12 @@ public class Painter {
 		paint.setColor(color);
 	}
 	
-	public void setWidth(int width) {
+	public void setWidth(float width) {
 		this.width = width;
 		paint.setStrokeWidth(width);
 	}
 	
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 	

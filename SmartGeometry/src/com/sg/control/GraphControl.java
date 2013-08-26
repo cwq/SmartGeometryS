@@ -23,10 +23,10 @@ public class GraphControl {
 	private Painter checkedPainter;
 	
 	
-	public GraphControl(List<Graph> graphList, int color, int width) {
+	public GraphControl(List<Graph> graphList, int color, float width) {
 		this.graphList = graphList;
 		painter = new Painter(color, width);
-		checkedPainter = new Painter(Color.RED, 3);
+		checkedPainter = new Painter(Color.RED, width);
 	}
 	
 	/*

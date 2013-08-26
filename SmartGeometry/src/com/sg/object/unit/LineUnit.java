@@ -82,14 +82,14 @@ public class LineUnit extends GUnit implements Serializable{
 
 	@Override
 	public void draw(Canvas canvas, Painter painter) {
-		Painter specialPainter = new Painter(Color.BLUE, 2);
+		Painter specialPainter = new Painter(Color.BLUE, ThresholdProperty.DRAW_WIDTH-1);
 		if(tangentPoint != null) {
 			canvas.drawLine(startPointUnit.getPoint().getX(), startPointUnit.getPoint().getY(), 
 					tangentPoint.getX(), tangentPoint.getY(), specialPainter.getPaint());
 		}
 		canvas.drawLine(startPointUnit.getPoint().getX(), startPointUnit.getPoint().getY(), 
 				endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), painter.getPaint());
-		specialPainter.setWidth(5);
+		specialPainter.setWidth(ThresholdProperty.DRAW_WIDTH+2);
 		switch(Type){
 			case 2:{
 				canvas.drawPoint(startPointUnit.getPoint().getX(), startPointUnit.getPoint().getY(), specialPainter.getPaint());

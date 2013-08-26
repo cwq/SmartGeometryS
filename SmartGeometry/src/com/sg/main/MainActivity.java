@@ -123,6 +123,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     private void initMenu() {
     	mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
     	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ThresholdProperty.BUTTON_WIDTH, LayoutParams.WRAP_CONTENT);
+    	Log.v("AAAAA", ThresholdProperty.BUTTON_WIDTH +"");
     	undo = (RadioButton)findViewById(R.id.undo);
     	redo = (RadioButton)findViewById(R.id.redo);
     	clear = (RadioButton)findViewById(R.id.clear);
@@ -165,7 +166,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
      * */
     private void initConfig() {
     	DisplayMetrics dm = getResources().getDisplayMetrics();
-    	ThresholdProperty.set(dm.densityDpi / DisplayMetrics.DENSITY_MEDIUM);
+    	ThresholdProperty.set((float)dm.densityDpi / DisplayMetrics.DENSITY_MEDIUM, (float)dm.widthPixels / 480);
     }
     
     //返回键对话框

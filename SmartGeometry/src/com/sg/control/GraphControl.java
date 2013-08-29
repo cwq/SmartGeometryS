@@ -5,63 +5,47 @@
 
 package com.sg.control;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import com.sg.object.Point;
 import com.sg.object.graph.Graph;
+import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
 public class GraphControl {
 	
 	private ConcurrentHashMap<Long,Graph> graphList;
+	private Collection<Graph> graphs;
 	
 	private Painter painter;
 	private Painter checkedPainter;
 	
 	
-	public GraphControl(List<Graph> graphList, int color, float width) {
+	public GraphControl() {
 		this.graphList = new ConcurrentHashMap<Long,Graph>();
-		painter = new Painter(color, width);
-		checkedPainter = new Painter(Color.RED, width);
+		painter = new Painter(Color.BLACK, ThresholdProperty.DRAW_WIDTH);
+		checkedPainter = new Painter(Color.RED, ThresholdProperty.DRAW_WIDTH);
 	}
 	
 	/*
 	 * 在画板canvas上绘制对象列表
 	 * */
-	public void drawObjList(List<Graph> graphList, Canvas canvas) {
-		//int size = graphList.size();
-		//canvas.drawText("同步", 0, 2, 10, 10, checkedPainter.getPaint());
-		//Log.v("size1", graphList.size() + "");
-		
-		for(int num = 0; num < graphList.size(); num++) {
-			/*
-			//size = graphList.size();
-			if(num >= graphList.size()){
-				canvas.drawText("不同步", 0, 3, 10, 10, checkedPainter.getPaint());
-				Log.v("不同步", "");
-				return;
-			}
-			*/
-			//Log.v("size2", num + "");
-			Graph graph = graphList.get(num);
-			this.drawObj(graph, canvas);
+	public void drawGraphList(Canvas canvas) {
+
+		graphs = graphList.values();
+		for(Graph graph : graphs) {
+			drawGraph(graph, canvas);
 		}
-		/*
-		Iterator<Graph> it = graphList.iterator();
-		while(it.hasNext())
-		{
-			Graph graph = it.next();
-			this.drawObj(graph, canvas);
-		}*/
+
 	}
 	
 	/*
 	 * 在画板canvas上绘制graph对象
 	 * */
-	public void drawObj(Graph graph, Canvas canvas) {
+	public void drawGraph(Graph graph, Canvas canvas) {
 		if(graph != null) {
 			if(graph.isChecked()) {
 				graph.draw(canvas, checkedPainter);
@@ -71,6 +55,15 @@ public class GraphControl {
 		}
 	}
 	
+	public Graph getCheckedGraph(Point curPoint) {
+		graphs = graphList.values();
+		for(Graph graph : graphs) {
+			if(graph.isInGraph(curPoint))
+				return graph;
+		}
+		return null;
+	}
+	
 	/*
 	 * 添加对象到绘制列表
 	 * */
@@ -78,6 +71,30 @@ public class GraphControl {
 		if(graph != null && !graphList.containsKey(graph.getID())) {
 			graphList.put(graph.getID(), graph);
 		}
+	}
+	
+	public void deleteGraph(Graph graph) {
+		graphList.remove(graph.getID());
+	}
+	
+	public void replaceGraph(Graph graph) {
+		graphList.replace(graph.getID(), graph);
+	}
+	
+	public void clearGraph() {
+		graphList.clear();
+	}
+	
+	public Collection<Graph> getGraphList() {
+		return graphList.values();
+	}
+	
+	public ConcurrentHashMap<Long,Graph> getConcurrentHashMap() {
+		return graphList;
+	}
+	
+	public void setConcurrentHashMap(ConcurrentHashMap<Long,Graph> graphList) {
+		this.graphList = graphList;
 	}
 
 }

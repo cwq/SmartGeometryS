@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.sg.object.graph.Graph;
 
@@ -30,7 +31,7 @@ public class FileService {
 		this.context = context;
 	}
 	
-	public void save(List<Graph> graphList, String name) {
+	public void save(ConcurrentHashMap<Long,Graph> graphList, String name) {
 		if(!name.endsWith(SUFFIX)) {   //后缀名
 			name += SUFFIX;
 		}

@@ -91,7 +91,7 @@ public class FileExplorerActivity extends Activity
 				// 用户单击了文件
 				if (currentFiles[position].isFile()){
 					String path = currentFiles[position].getAbsolutePath();
-					if(path.endsWith(".jsg")){
+					if(path.endsWith(".sg")){
 						Intent intent = new Intent();
 						intent.putExtra("path", path);
 						setResult(RESULT_OK, intent);
@@ -144,7 +144,7 @@ public class FileExplorerActivity extends Activity
 				}
 				else
 				{
-					if(files[i].getName().endsWith(".jsg")){
+					if(files[i].getName().endsWith(".sg")){
 						listItem.put("icon", R.drawable.ic_launcher);
 					}else{
 						listItem.put("icon", R.drawable.file);

@@ -69,12 +69,12 @@ public class PenInfo {
 	 * 判断是否是不动点
 	 * 以点列表的中间点为圆心，指定半径的圆。超过一定的点在里面则是不动点
 	 * */
-	public boolean isFixedPoint(List<Point> pList) {
-		int n = pList.size();
-		Point cPoint = pList.get(n/2);
+	public boolean isFixedPoint() {
+		int n = penInfos.size();
+		Point cPoint = penInfos.get(n/2);
 		
 		int count = 0;     //在圆外的点数量
-		for(Point point : pList) {
+		for(Point point : penInfos) {
 			if(CommonFunc.distance(cPoint, point) > ThresholdProperty.POINT_DISTANCE) {
 				count++;
 			}

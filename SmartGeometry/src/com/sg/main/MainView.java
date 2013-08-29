@@ -3,6 +3,7 @@ package com.sg.main;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.sg.bluetooth.SynchronousThread;
 import com.sg.control.FileService;
@@ -53,9 +54,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 	private Graph curGraph;
 	private Graph checkedGraph;
 	private GUnit curUnit;
-	private List<Graph> graphList;
 	private List<Point> pointList;
 
+	private GraphControl graphControl;
 	private PenInfoCollector collector; // 点信息收集器
 	private GraphFactory graphFactory; // 图形对象工厂
 	private Constrainter constrainter; // 图形约束
@@ -103,9 +104,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		isDoubleTouch = false;
 
 		curUnit = null;
-		graphList = new ArrayList<Graph>();
 		pointList = new ArrayList<Point>();
 
+		graphControl = new GraphControl();
 		collector = PenInfoCollector.getInstance();
 		graphFactory = GraphFactory.getInstance();
 		constrainter = Constrainter.getInstance();
@@ -193,13 +194,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 		super.onDraw(canvas);
 		canvas.drawColor(Color.WHITE);         //画背景色
-		GraphControl graphControl = new GraphControl(graphList, color, ThresholdProperty.DRAW_WIDTH);
 		if(curGraph instanceof Sketch){
-			graphControl.drawObj(curGraph, canvas); // 绘制当前勾画的草图
+			graphControl.drawGraph(curGraph, canvas); // 绘制当前勾画的草图
 		}
 		//graphControl.drawObj(curGraph, canvas); // 绘制当前勾画的草图
 		//Log.v("draw size", graphList.size() + "");
-		graphControl.drawObjList(graphList, canvas); // 绘制已有的图像对象列表
+		graphControl.drawGraphList(canvas); // 绘制已有的图像对象列表
 
 		Canvas tCanvas = mHolder.lockCanvas();  // 锁定画布，一般在锁定后就可以通过其返回的画布对象Canvas，在其上面画图等操作了
 		if(tCanvas == null) {
@@ -346,7 +346,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						if(curGraph instanceof TriangleGraph && ((TriangleGraph)curGraph).isCurveConstrainted())
 							;
 						else
-							curGraph = regulariser.regularise(graphList, curGraph);  //图形规整
+							curGraph = regulariser.regularise(graphControl, curGraph);  //图形规整
 					} else {
 						if(((PointUnit)curUnit).isCommonConstrainted()) {
 							curGraph = keepConstrainter.rebuildTriangleConstraint(curGraph);
@@ -356,7 +356,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				curUnit = null;
 				
 				//cai 2013.4.21
-				Graph tempGraph = constrainter.constraint(graphList, curGraph);
+				Graph tempGraph = constrainter.constraint(graphControl, curGraph);
 				if(tempGraph != null){   //动态约束
 					//动态约束线删除原来图形 再传约束后的图形
 					if(mSynchronousThread.isStart()) {
@@ -429,7 +429,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						isChecked = true;
 						curGraph = checkedGraph;
 						//cai 2013.4.21
-						Graph tempGraph = constrainter.constraint(graphList, curGraph);
+						Graph tempGraph = constrainter.constraint(graphControl, curGraph);
 						if(tempGraph != null){   //动态约束
 							//动态约束线删除原来图形 再传约束后的图形
 							if(mSynchronousThread.isStart()) {
@@ -460,8 +460,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				PenInfo penInfo = new PenInfo(pointList);
 				//选中图形
 				if (upTime - downTime > ThresholdProperty.PRESS_TIME_SHORT
-						&& penInfo.isFixedPoint(pointList)) { // 选中对象
-					Graph graph = graphFactory.getCheckedGraph(graphList, new PointUnit(pointList).getPoint());
+						&& penInfo.isFixedPoint()) { // 选中对象
+					Graph graph = graphControl.getCheckedGraph(new PointUnit(pointList).getPoint());
 					if (graph != null && graph != checkedGraph) {
 						graph.setChecked(true); // 选中图形
 						if(isChecked){    //如果已有选中图形
@@ -493,11 +493,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						break;
 					}
 				}
+				
 				//图形识别
 				Graph graph = graphFactory.create(penInfo.getNewPenInfo()); // 传入预处理后的点信息给图形工厂去识别，然后返回识别后的对象
 				if (graph != null) {
 					curGraph = graph.clone();
 				}
+				
 				//删除手势,撤销选中
 				if(isChecked){
 					isChecked = false;
@@ -509,7 +511,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					}
 					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 					//如果在选中图形外点一点 则识别为撤销选中
-					if(penInfo.isFixedPoint(pointList)){
+					if(penInfo.isFixedPoint()){
 						URSolver.RedoStackClear(); //清空redo
 						curGraph = null;
 						checkedGraph = null;
@@ -523,7 +525,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					//如果是删除手势
 					if(Recognizer.isDeleteGesture(pointList)){
 						Log.v("删除图形", "删除图形");
-						graphList.remove(checkedGraph);
+						graphControl.deleteGraph(checkedGraph);
 						
 						//cai 2013.4.21
 						if(mSynchronousThread.isStart()) {
@@ -540,10 +542,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						//URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 					}
 				}
+				
+				
 				//cai 2013.4.21
-				Graph tempGraph = curGraph = regulariser.regularise(graphList, curGraph);  //图形规整
+				Graph tempGraph = curGraph = regulariser.regularise(graphControl, curGraph);  //图形规整
 				//图形约束
-				curGraph = constrainter.constraint(graphList, curGraph);  // 对新构造的图形进一步约束识别
+				curGraph = constrainter.constraint(graphControl, curGraph);  // 对新构造的图形进一步约束识别
 				if(curGraph != null) { //有约束
 					if(curGraph instanceof TriangleGraph && curGraph.isGraphConstrainted() && graph instanceof LineGraph) {
 						//约束线用户意图推测
@@ -710,7 +714,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 	public void sendGraphList() {
 		if(mSynchronousThread.isStart()) {
 			mSynchronousThread.sendMessage("AXZ");
-			mSynchronousThread.sendMessage(graphList);
+			mSynchronousThread.sendMessage(graphControl.getGraphList());
 		}
 	}
 	
@@ -727,7 +731,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
     	//isFirstUndoDelete = true;
     	URSolver.RedoStackClear();  //清空reod undo栈
     	URSolver.UndoStackClear();
-    	graphList.clear();
+    	graphControl.clearGraph();
     }
     
 	public void Undo() {
@@ -746,7 +750,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		case NONE:
 			break;
 		case CREATE:
-			for(Graph graph : graphList){
+			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
 						/*
 						tempGraph = URSolver.getFrontGraph(graph);
@@ -766,8 +770,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						}
 						
 						*/
-					graphList.remove(graph);
-					Log.v("undo", graphList.size() + "");
+					graphControl.deleteGraph(graph);
+					//Log.v("undo", graphList.size() + "");
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
@@ -777,13 +781,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			}
 			break;
 		case CHANGE:
-			for(Graph graph : graphList){
+			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
 						tempGraph = URSolver.getFrontGraph(graph);
 						if(tempGraph != null){
 							Log.v("恢复改变之前图形", "恢复改变之前图形");
 							tempGraph = tempGraph.clone();
-							graphList.add(tempGraph); //添加约束,选中前的图形
+							//graphList.add(tempGraph); //添加约束,选中前的图形
+							graphControl.addGraph(tempGraph);
 //							//cai 2013.4.22
 //							if(mSynchronousThread.isStart()) {
 //								mSynchronousThread.writeGraph(tempGraph);
@@ -800,7 +805,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 								checkedGraph = null;
 							}
 						}
-					graphList.remove(graph);
+					//graphList.remove(graph);
+					graphControl.deleteGraph(graph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
@@ -808,7 +814,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 							mSynchronousThread.writeGraph(tempGraph);
 						}
 					}
-					Log.v("undo", graphList.size() + "");
+					//Log.v("undo", graphList.size() + "");
 					return;
 				}
 			}
@@ -824,7 +830,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				}
 				*/
 				tempGraph = tempGraph.clone();
-				graphList.add(tempGraph); //添加被删除的图形
+				//graphList.add(tempGraph); //添加被删除的图形
+				graphControl.addGraph(tempGraph);
 				//cai 2013.4.22
 				if(mSynchronousThread.isStart()) {
 					mSynchronousThread.writeGraph(tempGraph);
@@ -843,19 +850,21 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				break;
 			//}
 		case MOVEANDCONSTRAIN:
-			for(Graph graph : graphList){
+			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
 						tempGraph = URSolver.getFrontGraph(graph);
 						if(tempGraph != null){
 							Log.v("恢复动态约束前的图形", "恢复动态约束前的图形");
 							tempGraph = tempGraph.clone();
-							graphList.add(tempGraph); //添加约束前的图形
+							//graphList.add(tempGraph); //添加约束前的图形
+							graphControl.addGraph(tempGraph);
 //							//cai 2013.4.22
 //							if(mSynchronousThread.isStart()) {
 //								mSynchronousThread.writeGraph(tempGraph);
 //							}
 						}
-					graphList.remove(graph);
+					//graphList.remove(graph);
+					graphControl.deleteGraph(graph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
@@ -868,12 +877,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					isChecked = true;
 					curGraph = tempGraph;
 					checkedGraph = tempGraph;
-					graphList.add(tempGraph);
+					//graphList.add(tempGraph);
+					graphControl.addGraph(tempGraph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeGraph(tempGraph);
 					}
-					Log.v("undo", graphList.size() + "");
+					//Log.v("undo", graphList.size() + "");
 					return;
 				}
 			}
@@ -918,17 +928,19 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				curGraph = null;
 				checkedGraph = null;
 			}
-			graphList.add(tempGraph);
+			//graphList.add(tempGraph);
+			graphControl.addGraph(tempGraph);
 			//cai 2013.4.22
 			if(mSynchronousThread.isStart()) {
 				mSynchronousThread.writeGraph(tempGraph);
 			}
-			Log.v("redo", graphList.size() + "");
+			//Log.v("redo", graphList.size() + "");
 			break;
 		case CHANGE:
-			for(Graph graph : graphList){
+			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
-					graphList.remove(graph);
+					//graphList.remove(graph);
+					graphControl.deleteGraph(graph);
 //					//cai 2013.4.22
 //					if(mSynchronousThread.isStart()) {
 //						mSynchronousThread.writeDeleteGraph(graph);
@@ -945,8 +957,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						curGraph = null;
 						checkedGraph = null;
 					}
-					graphList.add(tempGraph);
-					Log.v("redo", graphList.size() + "");
+					//graphList.add(tempGraph);
+					graphControl.addGraph(tempGraph);
+					//Log.v("redo", graphList.size() + "");
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeGraph(tempGraph);
@@ -956,10 +969,11 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			}
 			break;
 		case DELETE:
-			for(Graph graph : graphList){
+			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
 					Log.v("恢复删除操作", "恢复删除操作");
-					graphList.remove(graph);
+					//graphList.remove(graph);
+					graphControl.deleteGraph(graph);
 					isEidt = false;
 					isChecked = false;
 					curGraph = null;
@@ -973,10 +987,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			}
 			break;
 		case MOVEANDCONSTRAIN:
-			for(Graph graph : graphList){
+			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
-					graphList.remove(graph);
-					graphList.remove(curGraph);  //删除之前移动的约束的图形
+					//graphList.remove(graph);
+					//graphList.remove(curGraph);  //删除之前移动的约束的图形
+					graphControl.deleteGraph(graph);
+					graphControl.deleteGraph(curGraph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						//mSynchronousThread.writeDeleteGraph(graph);
@@ -987,12 +1003,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					isChecked = false;
 					curGraph = null;
 					checkedGraph = null;
-					graphList.add(tempGraph);
+					//graphList.add(tempGraph);
+					graphControl.addGraph(tempGraph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeGraph(tempGraph);
 					}
-					Log.v("redo", graphList.size() + "");
+					//Log.v("redo", graphList.size() + "");
 					return;
 				}
 			}
@@ -1004,17 +1021,17 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 	
 	public void save(String name){
 		userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
-		fileServicer.save(graphList, name);
+		fileServicer.save(graphControl.getConcurrentHashMap(), name);
 	}
 	
 	public void open(String path){
 		Object temp = fileServicer.read(path);
 		if(temp != null){
 			userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
-			graphList = (List<Graph>)temp;
+			graphControl.setConcurrentHashMap((ConcurrentHashMap<Long,Graph>)temp);
 			URSolver.RedoStackClear();  //清空reod undo栈
 	    	URSolver.UndoStackClear();
-	    	for(Graph graph : graphList){
+	    	for(Graph graph : graphControl.getGraphList()){
 	    		if(graph.isChecked()){
 	    			isEidt = true;
 					isChecked = true;

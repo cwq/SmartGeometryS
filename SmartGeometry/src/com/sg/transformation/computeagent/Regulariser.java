@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
-import android.widget.Toast;
-
+import com.sg.control.GraphControl;
 import com.sg.logic.common.CommonFunc;
 import com.sg.object.graph.Graph;
 import com.sg.object.graph.LineGraph;
@@ -64,7 +63,7 @@ public class Regulariser {
 		return instance;
 	}
 	
-	public Graph regularise(List<Graph> graphList, Graph curGraph) {
+	public Graph regularise(GraphControl graphControl, Graph curGraph) {
 
 		double minDist = ThresholdProperty.TWO_POINT_IS_CONSTRAINTED;
 		Graph graph = null;
@@ -83,7 +82,7 @@ public class Regulariser {
 				
 				if(distance < minDist) {
 
-					graphList.remove(curGraph);
+					graphControl.deleteGraph(curGraph);
 					LineUnit lastLine = (LineUnit) units.get(num - 2);  //最后一个线元
 					lastLine.setEndPointUnit(firstPoint);
 					units.remove(lastPoint);
@@ -95,7 +94,7 @@ public class Regulariser {
 						graph = new TriangleGraph(units);
 						graph.setChecked(true);
 						graph.setID(temp.getID());
-						graphList.add(graph);
+						graphControl.addGraph(graph);
 					}else{
 						if(units.size() == 8){
 							//重新构造四边形
@@ -103,11 +102,11 @@ public class Regulariser {
 							graph = new RectangleGraph(units);
 							graph.setChecked(true);
 							graph.setID(temp.getID());
-							graphList.add(graph);
+							graphControl.addGraph(graph);
 						}else{
 							graph = temp;
 							graph.setIsClosed(true);
-							graphList.add(graph);
+							graphControl.addGraph(graph);
 							/*
 							graph = new LineGraph();
 							((LineGraph)graph).buildLineGraph(units);

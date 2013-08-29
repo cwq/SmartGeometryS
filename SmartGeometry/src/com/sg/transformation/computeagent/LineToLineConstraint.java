@@ -2,6 +2,7 @@ package com.sg.transformation.computeagent;
 
 import java.util.List;
 
+import com.sg.control.GraphControl;
 import com.sg.logic.common.CommonFunc;
 import com.sg.object.graph.Graph;
 import com.sg.object.graph.LineGraph;
@@ -75,23 +76,23 @@ public class LineToLineConstraint {
 	}
 	
 	//重新构建闭合图形
-	public Graph rebuildLinearClose(List<Graph> graphList, Graph graph) {
+	public Graph rebuildLinearClose(GraphControl graphControl, Graph graph) {
 		Graph temp = null;
 		if(graph instanceof LineGraph && graph.isClosed()){
 			List<GUnit> units = graph.getGraph();
 			if(units.size() == 6){
 				//重新构造成三角形
-				graphList.remove(graph);
+				graphControl.deleteGraph(graph);
 				temp = new TriangleGraph(units);
 				temp.setID(graph.getID());
-				graphList.add(temp);
+				graphControl.addGraph(temp);
 			}
 			if(units.size() == 8){
 				//重新构造四边形
-				graphList.remove(graph);
+				graphControl.deleteGraph(graph);
 				temp = new RectangleGraph(units);
 				temp.setID(graph.getID());
-				graphList.add(temp);
+				graphControl.addGraph(temp);
 			}
 		}
 		return temp;

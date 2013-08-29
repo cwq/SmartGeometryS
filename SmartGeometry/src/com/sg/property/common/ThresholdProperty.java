@@ -50,14 +50,14 @@ public class ThresholdProperty {
 		JUDGE_LINE_VALUE = 0.9;
 		PRESS_TIME_SHORT = 300;
 		PRESS_TIME_LONG = 1000;
-		GRAPH_CHECKED_DISTANCE = 40 * density;
+		GRAPH_CHECKED_DISTANCE = 20 * density;
 		TWO_POINT_IS_CLOSED = 50 * density;
 		TWO_POINT_IS_CONSTRAINTED = 30 * density;
 		DRAW_WIDTH = 3 * density;
 		MAGNIFIER_RADUIS = 80 * density;
 		LINE_DISTANCE = 15 * density;
-		TRI_WIDTH = (int) (200 * density);
-		REC_WIDTH = (int) (350 * density);
+		TRI_WIDTH = (int) (200 * wDensity);
+		REC_WIDTH = (int) (350 * wDensity);
 		POP_HEIGTH = (int) (70 * density);
 		BUTTON_WIDTH = (int) (96 * wDensity);
 	}

@@ -16,6 +16,7 @@ import com.sg.object.Point;
 public class Stroke {
 	
 	private double averageSpeed;
+	private static boolean isHandled;
 	
 //	private List<Point> pList;
 //
@@ -275,6 +276,11 @@ public class Stroke {
 	}
 	
 	public List<Integer> getSpecialPointIndexForDelete(List<Point> pList) {
+//		speed(pList);
+//		direction(pList);
+//		curvity(pList);
+//		space(pList);
+		
 		List<Integer> specialPointIndexsForDelete = new ArrayList<Integer>();
 		int n = pList.size();
 		for(int i=0; i < n; i++) {

@@ -1,6 +1,7 @@
 package com.sg.bluetooth;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -26,7 +27,7 @@ public class SynchronousThread implements Runnable {
 	private boolean isRun;
 	private boolean isStart;
 	private Queue<String> messages;
-	private List<Graph> graphList = null;
+	private Collection<Graph> graphList = null;
 	
 	public SynchronousThread(BluetoothService bluetoothService) {
 		mBluetoothService = bluetoothService;
@@ -74,7 +75,7 @@ public class SynchronousThread implements Runnable {
 	}
 	
 
-	public synchronized void sendMessage(List<Graph> graphList) {
+	public synchronized void sendMessage(Collection<Graph> graphList) {
 		// TODO Auto-generated method stub
 		this.graphList = graphList;
 	}

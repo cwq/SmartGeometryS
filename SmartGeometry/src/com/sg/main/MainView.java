@@ -31,7 +31,6 @@ import com.sg.transformation.computeagent.KeepConstrainter;
 import com.sg.transformation.computeagent.Regulariser;
 import com.sg.transformation.computeagent.UserIntentionReasoning;
 import com.sg.transformation.recognizer.Recognizer;
-import com.sg.transformation.renderfactory.GraphFactory;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -58,7 +57,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 
 	private GraphControl graphControl;
 	private PenInfoCollector collector; // 点信息收集器
-	private GraphFactory graphFactory; // 图形对象工厂
 	private Constrainter constrainter; // 图形约束
 	private Regulariser regulariser; // 图形规整
 
@@ -108,7 +106,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 
 		graphControl = new GraphControl();
 		collector = PenInfoCollector.getInstance();
-		graphFactory = GraphFactory.getInstance();
 		constrainter = Constrainter.getInstance();
 		regulariser = Regulariser.getInstance();
 		
@@ -495,7 +492,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				}
 				
 				//图形识别
-				Graph graph = graphFactory.create(penInfo.getNewPenInfo()); // 传入预处理后的点信息给图形工厂去识别，然后返回识别后的对象
+				Graph graph = graphControl.createGraph(penInfo.getNewPenInfo()); // 传入预处理后的点信息给图形工厂去识别，然后返回识别后的对象
 				if (graph != null) {
 					curGraph = graph.clone();
 				}
@@ -788,7 +785,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 							Log.v("恢复改变之前图形", "恢复改变之前图形");
 							tempGraph = tempGraph.clone();
 							//graphList.add(tempGraph); //添加约束,选中前的图形
-							graphControl.addGraph(tempGraph);
+							graphControl.replaceGraph(tempGraph);
 //							//cai 2013.4.22
 //							if(mSynchronousThread.isStart()) {
 //								mSynchronousThread.writeGraph(tempGraph);
@@ -806,7 +803,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 							}
 						}
 					//graphList.remove(graph);
-					graphControl.deleteGraph(graph);
+					//graphControl.deleteGraph(graph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
@@ -857,14 +854,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 							Log.v("恢复动态约束前的图形", "恢复动态约束前的图形");
 							tempGraph = tempGraph.clone();
 							//graphList.add(tempGraph); //添加约束前的图形
-							graphControl.addGraph(tempGraph);
+							graphControl.replaceGraph(tempGraph);
 //							//cai 2013.4.22
 //							if(mSynchronousThread.isStart()) {
 //								mSynchronousThread.writeGraph(tempGraph);
 //							}
 						}
 					//graphList.remove(graph);
-					graphControl.deleteGraph(graph);
+					//graphControl.deleteGraph(graph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
@@ -940,7 +937,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
 					//graphList.remove(graph);
-					graphControl.deleteGraph(graph);
+					//graphControl.deleteGraph(graph);
 //					//cai 2013.4.22
 //					if(mSynchronousThread.isStart()) {
 //						mSynchronousThread.writeDeleteGraph(graph);
@@ -958,7 +955,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						checkedGraph = null;
 					}
 					//graphList.add(tempGraph);
-					graphControl.addGraph(tempGraph);
+					//graphControl.addGraph(tempGraph);
+					graphControl.replaceGraph(tempGraph);
 					//Log.v("redo", graphList.size() + "");
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {

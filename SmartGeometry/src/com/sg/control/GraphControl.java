@@ -6,6 +6,7 @@
 package com.sg.control;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import android.graphics.Canvas;
@@ -14,6 +15,7 @@ import com.sg.object.Point;
 import com.sg.object.graph.Graph;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
+import com.sg.transformation.recognizer.Recognizer;
 
 public class GraphControl {
 	
@@ -23,9 +25,12 @@ public class GraphControl {
 	private Painter painter;
 	private Painter checkedPainter;
 	
+	private Recognizer recognizer;
+	
 	
 	public GraphControl() {
 		this.graphList = new ConcurrentHashMap<Long,Graph>();
+		recognizer = new Recognizer();
 		painter = new Painter(Color.BLACK, ThresholdProperty.DRAW_WIDTH);
 		checkedPainter = new Painter(Color.RED, ThresholdProperty.DRAW_WIDTH);
 	}
@@ -62,6 +67,10 @@ public class GraphControl {
 				return graph;
 		}
 		return null;
+	}
+	
+	public Graph createGraph(List<Point> pList) {
+		return recognizer.recognize(pList);
 	}
 	
 	/*

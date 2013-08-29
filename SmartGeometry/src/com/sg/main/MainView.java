@@ -1031,6 +1031,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			graphControl.setConcurrentHashMap((ConcurrentHashMap<Long,Graph>)temp);
 			URSolver.RedoStackClear();  //清空reod undo栈
 	    	URSolver.UndoStackClear();
+			if(mSynchronousThread.isStart()) {
+				sendGraphList();
+			}
 	    	for(Graph graph : graphControl.getGraphList()){
 	    		if(graph.isChecked()){
 	    			isEidt = true;
@@ -1044,9 +1047,6 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			isChecked = false;
 			curGraph = null;
 			checkedGraph = null;
-			if(mSynchronousThread.isStart()) {
-				sendGraphList();
-			}
 		}
 	}
 }

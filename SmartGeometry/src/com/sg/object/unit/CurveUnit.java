@@ -38,8 +38,8 @@ public class CurveUnit extends GUnit implements Serializable {
 	private double alpha;  //旋转角
 	private double Cos, Sin;  //cos(alpha), sin(alpha)
 	
-	//cai
-	private List<ConstraintStruct> constraintStructs;
+//	//cai
+//	private List<ConstraintStruct> constraintStructs;
 	
 	//3-19,cai
 	private boolean isInternallyTangentCircleOfTriangle = false;
@@ -52,9 +52,9 @@ public class CurveUnit extends GUnit implements Serializable {
 	 */
 
 	public CurveUnit(List<Point> pList) {
-		//cai
-		constraintStructs = new ArrayList<ConstraintStruct>();
-		//
+//		//cai
+//		constraintStructs = new ArrayList<ConstraintStruct>();
+//		//
 
 		curveType = CurveType.None;
 		fact[5] = f;
@@ -626,10 +626,10 @@ public class CurveUnit extends GUnit implements Serializable {
 		if(curveType == CurveType.Circle || curveType == CurveType.Ellipse)
 			((CurveUnit)temp).center = (PointUnit) center.clone();
 		
-		((CurveUnit)temp).constraintStructs = new ArrayList<ConstraintStruct>();
-		for(ConstraintStruct conStrut : constraintStructs) {
-			((CurveUnit)temp).constraintStructs.add(conStrut.clone());
-		}
+//		((CurveUnit)temp).constraintStructs = new ArrayList<ConstraintStruct>();
+//		for(ConstraintStruct conStrut : constraintStructs) {
+//			((CurveUnit)temp).constraintStructs.add(conStrut.clone());
+//		}
 		return temp;
 	}
 
@@ -746,13 +746,13 @@ public class CurveUnit extends GUnit implements Serializable {
 		}
 	}
 
-	public List<ConstraintStruct> getConstraintStruct() {
-		return constraintStructs;
-	}
-
-	public void addConstraintStruct(ConstraintStruct constraintStruct) {
-		constraintStructs.add(constraintStruct);
-	}
+//	public List<ConstraintStruct> getConstraintStruct() {
+//		return constraintStructs;
+//	}
+//
+//	public void addConstraintStruct(ConstraintStruct constraintStruct) {
+//		constraintStructs.add(constraintStruct);
+//	}
 
 	public boolean isInternallyTangentCircleOfTriangle() {
 		return isInternallyTangentCircleOfTriangle;

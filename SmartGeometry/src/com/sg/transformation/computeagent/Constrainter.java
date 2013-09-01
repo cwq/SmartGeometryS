@@ -48,13 +48,23 @@ public class Constrainter {
 	
 	public Graph constraint(GraphControl graphControl, Graph curGraph) { 
 		Graph constraintGraph = null;
-		if(curGraph instanceof LineGraph && curGraph.getGraph().size() == 3) {      //对一条直线图进行约束识别
+		//不闭合直线 先与 不闭合直线约束识别
+		if(curGraph instanceof LineGraph && !curGraph.isClosed()) {
 			for(Graph graph : graphControl.getGraphList()) {
-				if(graph instanceof LineGraph && !graph.isClosed() && graph != curGraph){ //如果图形是直线 不闭合图形
+				if(graph instanceof LineGraph && !graph.isClosed() && graph != curGraph) {
 					constraintGraph = lineToLineConstraint.lineToLineConstrain(graph, curGraph);
 					if(constraintGraph != null)
 						break;
-				}else{
+				}
+			}
+		}
+		if(curGraph instanceof LineGraph && curGraph.getGraph().size() == 3) {      //对一条直线图进行约束识别
+			for(Graph graph : graphControl.getGraphList()) {
+//				if(graph instanceof LineGraph && !graph.isClosed() && graph != curGraph){ //如果图形是直线 不闭合图形
+//					constraintGraph = lineToLineConstraint.lineToLineConstrain(graph, curGraph);
+//					if(constraintGraph != null)
+//						break;
+//				}else{
 					if(graph instanceof TriangleGraph || graph instanceof RectangleGraph){  //如果是三角形或四边形（只写了直线与三角形）
 						constraintGraph = linearCloseConstraint.linearConstraint(graph, curGraph);
 						if(constraintGraph != null)
@@ -66,7 +76,7 @@ public class Constrainter {
 								break;
 						}
 					}
-				}
+//				}
 			}
 		}
 		

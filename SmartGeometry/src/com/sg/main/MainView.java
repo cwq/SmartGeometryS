@@ -360,6 +360,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						mSynchronousThread.writeDeleteGraph(curGraph);
 						mSynchronousThread.writeGraph(tempGraph);
 					}
+					
+					if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
+						//约束线用户意图推测
+						userIntentionReasoning.constraintReasoning(this,tempGraph, touchX, touchY);
+					}
+					
 					curGraph = null;
 					checkedGraph = null;
 					isEidt = false;
@@ -433,6 +439,13 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 								mSynchronousThread.writeDeleteGraph(curGraph);
 								mSynchronousThread.writeGraph(tempGraph);
 							}
+							
+							if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
+								//约束线用户意图推测
+								userIntentionReasoning.constraintReasoning(this,tempGraph, touchX, touchY);
+							}
+							
+							
 							curGraph = null;
 							checkedGraph = null;
 							isEidt = false;
@@ -460,7 +473,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						&& penInfo.isFixedPoint()) { // 选中对象
 					Graph graph = graphControl.getCheckedGraph(new PointUnit(pointList).getPoint());
 					if (graph != null && graph != checkedGraph) {
-						graph.setChecked(true); // 选中图形
+						//graph.setChecked(true); // 选中图形
 						if(isChecked){    //如果已有选中图形
 							Log.v("已选中图形", "已选中图形");
 							checkedGraph.setChecked(false);

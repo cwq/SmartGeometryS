@@ -5,14 +5,18 @@
 
 package com.sg.control;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import android.R.integer;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import com.sg.object.Point;
+import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.graph.Graph;
+import com.sg.object.graph.LineGraph;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 import com.sg.transformation.recognizer.Recognizer;
@@ -21,6 +25,7 @@ public class GraphControl {
 	
 	private ConcurrentHashMap<Long,Graph> graphList;
 	private Collection<Graph> graphs;
+//	private List<LineGraph> lines;
 	
 	private Painter painter;
 	private Painter checkedPainter;
@@ -29,7 +34,8 @@ public class GraphControl {
 	
 	
 	public GraphControl() {
-		this.graphList = new ConcurrentHashMap<Long,Graph>();
+		graphList = new ConcurrentHashMap<Long,Graph>();
+//		lines = new ArrayList<LineGraph>();
 		recognizer = new Recognizer();
 		painter = new Painter(Color.BLACK, ThresholdProperty.DRAW_WIDTH);
 		checkedPainter = new Painter(Color.RED, ThresholdProperty.DRAW_WIDTH);
@@ -60,13 +66,35 @@ public class GraphControl {
 		}
 	}
 	
+	/**
+	 * 获取选中图形，并把相关约束图形选中
+	 * 无选中 返回null
+	 * @param curPoint
+	 * @return
+	 */
 	public Graph getCheckedGraph(Point curPoint) {
 		graphs = graphList.values();
 		for(Graph graph : graphs) {
-			if(graph.isInGraph(curPoint))
+			if(graph.isInGraph(curPoint)) {
+				checkedGraph(graph, 0);
 				return graph;
+			}
 		}
 		return null;
+	}
+	
+	private void checkedGraph(Graph graph, long lastGraphKey) {
+		graph.setChecked(true);
+		if(graph.isGraphConstrainted()) {
+			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
+			for(ConstraintStruct cons : constraintStructs) {
+				if(cons.getConstraintGraphKey() != lastGraphKey) {
+					Graph g = graphList.get(cons.getConstraintGraphKey());
+					checkedGraph(g, graph.getID());
+				}
+				
+			}
+		}
 	}
 	
 	public Graph createGraph(List<Point> pList) {
@@ -79,19 +107,34 @@ public class GraphControl {
 	public void addGraph(Graph graph) {
 		if(graph != null && !graphList.containsKey(graph.getID())) {
 			graphList.put(graph.getID(), graph);
+//			if(graph instanceof LineGraph) {
+//				lines.add((LineGraph) graph);
+//			}
 		}
 	}
 	
 	public void deleteGraph(Graph graph) {
 		graphList.remove(graph.getID());
+//		if(graph instanceof LineGraph) {
+//			lines.remove((LineGraph) graph);
+//		}
 	}
 	
 	public void replaceGraph(Graph graph) {
 		graphList.replace(graph.getID(), graph);
+//		if(graph instanceof LineGraph) {
+//			for(int index = 0; index < lines.size(); index++) {
+//				if(lines.get(index).getID() == graph.getID()) {
+//					lines.set(index, (LineGraph) graph);
+//					break;
+//				}
+//			}
+//		}
 	}
 	
 	public void clearGraph() {
 		graphList.clear();
+//		lines.clear();
 	}
 	
 	public Collection<Graph> getGraphList() {
@@ -102,8 +145,19 @@ public class GraphControl {
 		return graphList;
 	}
 	
+//	public List<LineGraph> getLines() {
+//		return lines;
+//	}
+	
 	public void setConcurrentHashMap(ConcurrentHashMap<Long,Graph> graphList) {
 		this.graphList = graphList;
+//		lines.clear();
+//		graphs = graphList.values();
+//		for(Graph graph : graphs) {
+//			if(graph instanceof LineGraph) {
+//				lines.add((LineGraph) graph);
+//			}
+//		}
 	}
 
 }

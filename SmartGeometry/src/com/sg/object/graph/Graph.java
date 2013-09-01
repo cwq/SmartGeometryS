@@ -10,6 +10,7 @@ import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.VectorFunc;
 import com.sg.logic.strategy.TranslationStratery;
 import com.sg.object.Point;
+import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.unit.*;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
@@ -54,12 +55,16 @@ public abstract class Graph implements Cloneable, Serializable {
 
 	protected boolean isGraphConstrainted;  //图形是否有约束
 	
+	//cai 2013.8.30
+	protected  List<ConstraintStruct> constraintStructs;
+	
 	public Graph() {
 		id = new Date().getTime();
 		checked = false;
 		isClosed = false;
 		graph = new Vector<GUnit>();//ArrayList
 		isGraphConstrainted = false;
+		constraintStructs = new ArrayList<ConstraintStruct>();
 		//translationStratery = new LineStrategy();
 	}
 	
@@ -337,6 +342,14 @@ public abstract class Graph implements Cloneable, Serializable {
 		return isGraphConstrainted;
 	}
 	
+	public List<ConstraintStruct> getConstraintStruct() {
+		return constraintStructs;
+	}
+
+	public void addConstraintStruct(ConstraintStruct constraintStruct) {
+		constraintStructs.add(constraintStruct);
+	}
+	
 	public Graph clone(){
 		Graph temp = null;  
         try {  
@@ -344,18 +357,6 @@ public abstract class Graph implements Cloneable, Serializable {
             temp.graph = new ArrayList<GUnit>();
             for(GUnit unit : this.graph){
             	temp.graph.add(unit.clone());
-            	/*
-            	if(unit instanceof PointUnit){
-            		Log.v("id", ((PointUnit) unit).getID() + "");
-            		temp.graph.add(((PointUnit)unit).clone());
-            	}else{
-            		if(unit instanceof LineUnit){
-            			 temp.graph.add(((LineUnit)unit).clone());
-            		}else{
-            			
-            		}
-            	}
-            	*/
             }
             for(GUnit unit : temp.graph){
             	if(unit instanceof LineUnit){
@@ -373,6 +374,10 @@ public abstract class Graph implements Cloneable, Serializable {
             		}
             	}
             }
+            temp.constraintStructs = new ArrayList<ConstraintStruct>();
+    		for(ConstraintStruct conStrut : constraintStructs) {
+    			temp.constraintStructs.add(conStrut.clone());
+    		}
         } catch (CloneNotSupportedException e) {  
             e.printStackTrace();  
         }  

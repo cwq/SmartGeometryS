@@ -123,7 +123,9 @@ public class Regulariser {
 		if(graph == null)
 			graph = curGraph;
 		if(graph instanceof LineGraph){
-			if(graph.isClosed() && isPolygon(graph)){
+			
+			//cai 2013.9.1
+			if(graph.isClosed()/* && isPolygon(graph)*/){
 				regularPolygonHolotactic(graph);  //多边形规整
 			}else if(!graph.isClosed()){
 				if(graph.getGraph().size() > 3){
@@ -530,6 +532,10 @@ public class Regulariser {
 		double distance1 ,distance2 , distance3;
 		double cos1;
 		double angle1;
+		for(GUnit unit : graph.getGraph()) {
+			if(unit instanceof PointUnit)
+				point.add((PointUnit) unit);
+		}
 		Log.v("折线规整", "1"+","+point.size());
 		for(int i = 0 ; i < point.size() - 2 ; i++){
 			distance1 = CommonFunc.distance(point.get(i).getPoint(),point.get(i + 1).getPoint()); 
@@ -564,6 +570,7 @@ public class Regulariser {
 	 * 4.由第三步计算出的点有两个。其中有一个是多余的。我们通过向量旋转的知识来排除多余的那个点。
 	 */
 	public void regularPolygonHolotactic(Graph graph){
+		Log.v("多边形规整", "多边形规整");
 		List<GUnit> unitList = graph.getGraph();
 		List<PointUnit> point = new ArrayList<PointUnit>();
 		LineUnit ln1 = new LineUnit();
@@ -581,9 +588,13 @@ public class Regulariser {
 				}
 				else{
 					ln2 = (LineUnit)unit;
-					if(Math.abs(ln1.getLength() - ln2.getLength())/ln2.getLength() > PRIVIOUS){
+//					if(Math.abs(ln1.getLength() - ln2.getLength())/ln2.getLength() > PRIVIOUS){
+//						return;
+//					}
+					if(Math.abs(ln1.getLength() - ln2.getLength())> ThresholdProperty.TWO_POINT_IS_CONSTRAINTED){
 						return;
 					}
+					ln1 = ln2;
 				}
 			} 	
 		}

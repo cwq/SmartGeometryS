@@ -23,53 +23,135 @@ public class LineToLineConstraint {
 	public Graph lineToLineConstrain(Graph constraintGraph, Graph curGraph){
 		double minDist = ThresholdProperty.TWO_POINT_IS_CONSTRAINTED;
 		PointUnit constraintPointUnit = null;
-		PointUnit otherConstraintPointUnit = null;
-		//GUnit curUnit;
 		
-		int num = constraintGraph.getGraph().size();
+		int consNum = constraintGraph.getGraph().size();
 		PointUnit firstPointUnit = (PointUnit) constraintGraph.getGraph().get(0);    //约束图形的第一个点元
-		PointUnit lastPointUnit = (PointUnit) constraintGraph.getGraph().get(num - 1);  //约束图形的最后一个点元
+		PointUnit lastPointUnit = (PointUnit) constraintGraph.getGraph().get(consNum - 1);  //约束图形的最后一个点元
+		
+		int curNum = curGraph.getGraph().size();
+		PointUnit onePointUnit = (PointUnit) curGraph.getGraph().get(0);    //当前图形的第一个点元
+		LineUnit oneLineUnit = (LineUnit) curGraph.getGraph().get(1);
+		boolean isOneStart = (oneLineUnit.getStartPointUnit() == onePointUnit);
+		PointUnit twoPointUnit = (PointUnit) curGraph.getGraph().get(curNum - 1);  //当前图形的最后一个点元
+		LineUnit twoLineUnit = (LineUnit) curGraph.getGraph().get(curNum - 2);
+		boolean isTwoStart = (twoLineUnit.getStartPointUnit() == twoPointUnit);
+		
+		PointUnit otherPointUnit;  //被约束图形（直线）的另一个点元
 
-		if(this.lineToPoint((LineGraph) curGraph, firstPointUnit) < minDist){      //发生约束的是第一个点
+		if(CommonFunc.distance(firstPointUnit, onePointUnit) < minDist) {
 			constraintPointUnit = firstPointUnit;
-		}else{
-			if(this.lineToPoint((LineGraph) curGraph, lastPointUnit) < minDist){     //发生约束的是最后一个点
-				constraintPointUnit = lastPointUnit;
-			}else{
-				return null;           //没有约束
+			onePointUnit = firstPointUnit;
+			if(isOneStart)
+				oneLineUnit.setStartPointUnit(firstPointUnit);
+			else 
+				oneLineUnit.setEndPointUnit(firstPointUnit);
+			otherPointUnit = twoPointUnit;
+		} else {
+			if(CommonFunc.distance(firstPointUnit, twoPointUnit) < minDist) {
+				constraintPointUnit = firstPointUnit;
+				twoPointUnit = firstPointUnit;
+				if(isTwoStart)
+					twoLineUnit.setStartPointUnit(firstPointUnit);
+				else 
+					twoLineUnit.setEndPointUnit(firstPointUnit);
+				otherPointUnit = onePointUnit;
+			} else {
+				if(CommonFunc.distance(lastPointUnit, onePointUnit) < minDist) {
+					constraintPointUnit = lastPointUnit;
+					onePointUnit = lastPointUnit;
+					if(isOneStart)
+						oneLineUnit.setStartPointUnit(lastPointUnit);
+					else 
+						oneLineUnit.setEndPointUnit(lastPointUnit);
+					otherPointUnit = twoPointUnit;
+				} else {
+					if(CommonFunc.distance(lastPointUnit, twoPointUnit) < minDist) {
+						constraintPointUnit = lastPointUnit;
+						twoPointUnit = lastPointUnit;
+						if(isTwoStart)
+							twoLineUnit.setStartPointUnit(lastPointUnit);
+						else 
+							twoLineUnit.setEndPointUnit(lastPointUnit);
+						otherPointUnit = onePointUnit;
+					} else {
+						return null;           //没有约束
+					}
+				}
 			}
 		}
-		boolean isALine = (num == 3);    //如果约束图形是一条直线直线，只需进行一个点的约束识别，如果识别两点会造成约束图形与被约束图形直线重合
-		PointUnit otherPointUnit = getOtherPointUnit(curGraph, constraintPointUnit);  //被约束图形（直线）的另一个点元
+
+		boolean isALine = ((consNum == 3) && (curNum == 3));    //如果约束图形是一条直线与一条直线直线，只需进行一个点的约束识别，如果识别两点会造成约束图形与被约束图形直线重合
 		otherPointUnit.clearDegree();    //成为一个独立的点
+		
 		
 		if(!isALine) {
 			if(constraintPointUnit == firstPointUnit){          //如果约束点是第一个点
 				if(CommonFunc.distance(lastPointUnit, otherPointUnit) < minDist){         //有另一个约束点，则是闭合图形
-					otherConstraintPointUnit = lastPointUnit;
-					constraintGraph.buildGraph(new LineUnit(constraintPointUnit, otherConstraintPointUnit));
+					if(otherPointUnit == onePointUnit) {
+						if(isOneStart)
+							oneLineUnit.setStartPointUnit(lastPointUnit);
+						else 
+							oneLineUnit.setEndPointUnit(lastPointUnit);
+					}
+					else {
+						if(isTwoStart)
+							twoLineUnit.setStartPointUnit(lastPointUnit);
+						else 
+							twoLineUnit.setEndPointUnit(lastPointUnit);
+					}
+					for(int i = 1; i < (curNum - 1); i++) {
+						constraintGraph.buildGraph(curGraph.getGraph().get(i));
+					}
 					constraintGraph.setIsClosed(true);
 				}else{                                                                    //没有另一个约束点，则图元加在第一个点之前，保持点线点的顺序
-					constraintGraph.buildGraph(0, new LineUnit(constraintPointUnit, otherPointUnit));
-					constraintGraph.buildGraph(0, otherPointUnit);
+					if(constraintPointUnit == onePointUnit) {
+						for(int i = 1; i < curNum; i++) {
+							constraintGraph.buildGraph(0, curGraph.getGraph().get(i));
+						}
+					} else {
+						for(int i = curNum - 2; i >= 0; i--) {
+							constraintGraph.buildGraph(0, curGraph.getGraph().get(i));
+						}
+					}
 				}
 			}else{                                             //如果约束点是最后一个点
 				if(CommonFunc.distance(firstPointUnit, otherPointUnit) < minDist){
-					otherConstraintPointUnit = firstPointUnit;
-					constraintGraph.buildGraph(new LineUnit(constraintPointUnit, otherConstraintPointUnit));
+					if(otherPointUnit == onePointUnit) {
+						if(isOneStart)
+							oneLineUnit.setStartPointUnit(firstPointUnit);
+						else 
+							oneLineUnit.setEndPointUnit(firstPointUnit);
+					}
+					else {
+						if(isTwoStart)
+							twoLineUnit.setStartPointUnit(firstPointUnit);
+						else 
+							twoLineUnit.setEndPointUnit(firstPointUnit);
+					}
+					for(int i = 1; i < (curNum - 1); i++) {
+						constraintGraph.buildGraph(curGraph.getGraph().get(i));
+					}
 					constraintGraph.setIsClosed(true);
 				}else{                                                                    //没有另一个约束点，则图元加在最后一个点之后，保持点线点的顺序
-					constraintGraph.buildGraph(num, new LineUnit(constraintPointUnit, otherPointUnit));
-					constraintGraph.buildGraph(num + 1, otherPointUnit);
+					if(constraintPointUnit == onePointUnit) {
+						for(int i = 1; i < curNum; i++) {
+							constraintGraph.buildGraph(curGraph.getGraph().get(i));
+						}
+					} else {
+						for(int i = curNum - 2; i >= 0; i--) {
+							constraintGraph.buildGraph(curGraph.getGraph().get(i));
+						}
+					}
 				}
 			}
 		}else{
+			//一条直线与一条直线直线
 			if(constraintPointUnit == firstPointUnit){
-				constraintGraph.buildGraph(0, new LineUnit(constraintPointUnit, otherPointUnit));
+				constraintGraph.buildGraph(0, new LineUnit(otherPointUnit, constraintPointUnit));
 				constraintGraph.buildGraph(0, otherPointUnit);
 			}else{
-				constraintGraph.buildGraph(num, new LineUnit(constraintPointUnit, otherPointUnit));
-				constraintGraph.buildGraph(num + 1, otherPointUnit);
+				constraintGraph.buildGraph(consNum, new LineUnit(constraintPointUnit, otherPointUnit));
+				constraintGraph.buildGraph(consNum + 1, otherPointUnit);
 			}
 		}
 			return constraintGraph;
@@ -96,77 +178,5 @@ public class LineToLineConstraint {
 			}
 		}
 		return temp;
-	}
-	
-	
-	/*
-	 * 线段的两个端点到点的最小距离
-	 * */
-	private double lineToPoint(LineGraph lineGraph, PointUnit pUnit) {
-		double[] minDist = new double[2];
-		/*
-		int i = 0;
-		for(GUnit unit : lineGraph.getGraph()) {
-			if(unit instanceof PointUnit) {
-				minDist[i] = CommonFunc.distance((PointUnit)unit, pUnit);
-				i++;
-			}
-		}
-		*/
-		//this.constraintPointUnit = pUnit;
-		int num = lineGraph.getGraph().size();
-		minDist[0] = CommonFunc.distance((PointUnit)lineGraph.getGraph().get(0), pUnit);
-		minDist[1] = CommonFunc.distance((PointUnit)lineGraph.getGraph().get(num - 1), pUnit);
-		return CommonFunc.min(minDist);
-	}
-	
-	private PointUnit getOtherPointUnit(Graph graph, PointUnit constraintPUnit) {
-		//找到直线除了约束的另一个点
-		//PointUnit theOther = null;
-		/*
-		double maxDist = Double.MIN_VALUE;
-		double curDist = maxDist;
-		
-		if(graph instanceof LineGraph) {
-			for(GUnit unit : graph.getGraph()) {
-				if(unit instanceof PointUnit) {
-					curDist = CommonFunc.distance((PointUnit)unit, constraintPUnit);
-					if(maxDist < curDist) {
-						maxDist = curDist;
-						theOther = (PointUnit)unit;
-					}
-				}
-			}
-			return theOther;
-		}
-		
-		if(graph instanceof LineGraph){
-			for(GUnit unit : graph.getGraph()) {
-				if(unit instanceof LineUnit){
-					PointUnit starPointUnit = ((LineUnit)unit).getStartPointUnit();
-					PointUnit endPointUnit = ((LineUnit)unit).getEndPointUnit();
-					//距离远的为另一个点
-					if(CommonFunc.distance(starPointUnit, constraintPUnit) < CommonFunc.distance(endPointUnit, constraintPUnit)){
-						theOther = endPointUnit;
-					}
-					else{
-						theOther = starPointUnit;
-					}
-					return theOther;
-				}
-			}
-		}
-		return null;
-		*/
-		//理约束点远的为另一点
-		int num = graph.getGraph().size();
-		PointUnit starPointUnit = (PointUnit) graph.getGraph().get(0);
-		PointUnit endPointUnit = (PointUnit) graph.getGraph().get(num - 1);
-		if(CommonFunc.distance(starPointUnit, constraintPUnit) < CommonFunc.distance(endPointUnit, constraintPUnit)){
-			return endPointUnit;
-		}
-		else{
-			return starPointUnit;
-		}
 	}
 }

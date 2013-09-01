@@ -74,43 +74,43 @@ public class CurveStrategy implements TranslationStratery, Serializable {
 			centerCurve.scale(scaleMatrix, translationCenter);
 			//double differentR = centerCurve.getRadius() - oldR;
 			double scale = (centerCurve.getRadius() - oldR) / oldR;
-			//变化该圆的弦，切线
-			List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
-			for(ConstraintStruct conStrut : constraintStructs) {
-				//弦
-				if(conStrut.getConstraintType() == ConstraintType.HypotenuseOfCircle) {
-					graph.getGraph().get(conStrut.getConstraintUnitIndex()).scale(scaleMatrix, translationCenter);
-				}
-				//切线
-				if(conStrut.getConstraintType() == ConstraintType.TangentOfCircle) {
-					LineUnit line = (LineUnit) graph.getGraph().get(conStrut.getConstraintUnitIndex());
-//					PointUnit pointUnit1 = line.getStartPointUnit();
-//					PointUnit pointUnit2 = line.getEndPointUnit();
+//			//变化该圆的弦，切线
+//			List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
+//			for(ConstraintStruct conStrut : constraintStructs) {
+//				//弦
+//				if(conStrut.getConstraintType() == ConstraintType.HypotenuseOfCircle) {
+//					graph.getGraph().get(conStrut.getConstraintUnitIndex()).scale(scaleMatrix, translationCenter);
+//				}
+//				//切线
+//				if(conStrut.getConstraintType() == ConstraintType.TangentOfCircle) {
+//					LineUnit line = (LineUnit) graph.getGraph().get(conStrut.getConstraintUnitIndex());
+////					PointUnit pointUnit1 = line.getStartPointUnit();
+////					PointUnit pointUnit2 = line.getEndPointUnit();
+////					PointUnit center = centerCurve.getCenter();
+////					float k = ((float) (pointUnit2.getY() - pointUnit1
+////							.getY()))
+////							/ (pointUnit2.getX() - pointUnit1.getX());
+////					float x = ((-k)
+////							* pointUnit1.getY()
+////							+ k
+////							* k
+////							* pointUnit1.getX()
+////							+ center.getX() + k
+////							* center.getY())
+////							/ (1 + k * k);
+////					float y = k * x + pointUnit1.getY() - k
+////							* pointUnit1.getX();
+//					
 //					PointUnit center = centerCurve.getCenter();
-//					float k = ((float) (pointUnit2.getY() - pointUnit1
-//							.getY()))
-//							/ (pointUnit2.getX() - pointUnit1.getX());
-//					float x = ((-k)
-//							* pointUnit1.getY()
-//							+ k
-//							* k
-//							* pointUnit1.getX()
-//							+ center.getX() + k
-//							* center.getY())
-//							/ (1 + k * k);
-//					float y = k * x + pointUnit1.getY() - k
-//							* pointUnit1.getX();
-					
-					PointUnit center = centerCurve.getCenter();
-					PointUnit tangentPoint = line.getTangentPoint();
-					float x = tangentPoint.getX();
-					float y = tangentPoint.getY();
-					
-					float[][] transMatrix = {{1,0,(float) ((x-center.getX())*scale)},
-							{0,1,(float) ((y-center.getY())*scale)}, {0,0,1}};
-					line.translate(transMatrix);
-				}
-			}
+//					PointUnit tangentPoint = line.getTangentPoint();
+//					float x = tangentPoint.getX();
+//					float y = tangentPoint.getY();
+//					
+//					float[][] transMatrix = {{1,0,(float) ((x-center.getX())*scale)},
+//							{0,1,(float) ((y-center.getY())*scale)}, {0,0,1}};
+//					line.translate(transMatrix);
+//				}
+//			}
 		} else {
 			translationCenter = findTranslationCenter(graph);
 			//变换

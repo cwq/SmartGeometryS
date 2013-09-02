@@ -125,7 +125,7 @@ public class Regulariser {
 		if(graph instanceof LineGraph){
 			
 			//cai 2013.9.1
-			if(graph.isClosed()/* && isPolygon(graph)*/){
+			if(graph.isClosed() && isPolygon(graph)){
 				regularPolygonHolotactic(graph);  //多边形规整
 			}else if(!graph.isClosed()){
 				if(graph.getGraph().size() > 3){

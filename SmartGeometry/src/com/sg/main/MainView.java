@@ -300,12 +300,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //							;
 //						else
 //							//拖动三角形一般约束线的点
-							LineStrategy.translatePointInLine(curUnit, curGraph, new Point(touchX, touchY));
+							LineStrategy.translatePointInLine(graphControl, curUnit, curGraph, new Point(touchX, touchY));
 						
 					} else {
 						if(((PointUnit)curUnit).isInCurve()) {
 							//拖拽在曲线上的点
-							CurveStrategy.translatePointInCurve(curUnit, curGraph, new Point(touchX, touchY));
+							CurveStrategy.translatePointInCurve(graphControl, curUnit, new Point(touchX, touchY));
 							keepConstrainter.keepInternallyTangentCircleOfTriangle(curGraph);
 						} else {
 							if(curGraph instanceof TriangleGraph && ((TriangleGraph)curGraph).isCurveConstrainted()) {
@@ -476,7 +476,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						//graph.setChecked(true); // 选中图形
 						if(isChecked){    //如果已有选中图形
 							Log.v("已选中图形", "已选中图形");
-							checkedGraph.setChecked(false);
+//							checkedGraph.setChecked(false);
+							graphControl.checkedGraph(checkedGraph, 0, false);
+							
 							//cai 2013.4.24
 							if(mSynchronousThread.isStart()) {
 								mSynchronousThread.writeDisselectGraph(checkedGraph);
@@ -514,7 +516,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				if(isChecked){
 					isChecked = false;
 					//删除手势
-					checkedGraph.setChecked(false);
+//					checkedGraph.setChecked(false);
+					graphControl.checkedGraph(checkedGraph, 0, false);
+					
 					//cai 2013.4.24
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDisselectGraph(checkedGraph);
@@ -535,8 +539,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					//如果是删除手势
 					if(Recognizer.isDeleteGesture(pointList)){
 						Log.v("删除图形", "删除图形");
-						graphControl.deleteGraph(checkedGraph);
-						
+//						graphControl.deleteGraph(checkedGraph);
+						graphControl.deleteConstraintedGraph(checkedGraph, 0);
 						//cai 2013.4.21
 						if(mSynchronousThread.isStart()) {
 							//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");

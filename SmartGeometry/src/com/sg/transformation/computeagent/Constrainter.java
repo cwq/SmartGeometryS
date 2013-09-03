@@ -89,7 +89,8 @@ public class Constrainter {
 				temp = constraintGraph;
 			keepConstrainter.keepConstraint(temp);
 			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系
-				temp.setChecked(false);
+//				temp.setChecked(false);
+				graphControl.checkedGraph(temp, 0, false);
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
 			}else{
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));
@@ -131,9 +132,9 @@ public class Constrainter {
 					if(graph instanceof LineGraph) {
 						constraintGraph = curveConstraint.curveToLineConstrain(graph, curGraph);
 						if(constraintGraph != null) {
-							constraintGraph.setID(graph.getID());
-							graphControl.deleteGraph(graph);
-							graphControl.addGraph(constraintGraph);
+//							constraintGraph.setID(graph.getID());
+//							graphControl.deleteGraph(graph);
+//							graphControl.addGraph(constraintGraph);
 							break;
 						}
 					}
@@ -157,9 +158,9 @@ public class Constrainter {
 				if(graph instanceof CurveGraph) {
 					constraintGraph = curveConstraint.triToCurveConstrain(graph, curGraph);
 					if(constraintGraph != null) {
-						constraintGraph.setID(graph.getID());
-						graphControl.deleteGraph(graph);
-						graphControl.addGraph(constraintGraph);
+//						constraintGraph.setID(graph.getID());
+//						graphControl.deleteGraph(graph);
+//						graphControl.addGraph(constraintGraph);
 						break;
 					}
 				}
@@ -183,7 +184,8 @@ public class Constrainter {
 				temp = constraintGraph;
 			keepConstrainter.keepConstraint(temp);
 			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系，则需删除curGraph
-				temp.setChecked(false);
+//				temp.setChecked(false);
+				graphControl.checkedGraph(temp, 0, false);
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
 			}else{
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));

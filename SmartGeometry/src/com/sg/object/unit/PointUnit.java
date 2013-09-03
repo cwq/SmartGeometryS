@@ -10,6 +10,7 @@ import com.sg.object.graph.Graph;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
+import android.R.integer;
 import android.graphics.Canvas;
 
 public class PointUnit extends GUnit {
@@ -20,7 +21,9 @@ public class PointUnit extends GUnit {
 	private boolean isInLine; //点是否在直线上
 	
 	private boolean isInCurve; //点是否在曲线上
-	private int indexOfCurve;  //所在曲线图元的下标
+//	private int indexOfCurve;  //所在曲线图元的下标
+	
+	private long keyOfLineOrCurve; ////点所在直线 曲线图的key
 	
 	private boolean isCommonConstrainted; //是否是一般约束点
 	private int mark;
@@ -263,12 +266,20 @@ public class PointUnit extends GUnit {
 		this.isInCurve = isInCurve;
 	}
 
-	public int getIndexOfCurve() {
-		return indexOfCurve;
+	public long getKeyOfLineOrCurve() {
+		return keyOfLineOrCurve;
 	}
 
-	public void setIndexOfCurve(int indexOfCurve) {
-		this.indexOfCurve = indexOfCurve;
+	public void setKeyOfLineOrCurve(long keyOfLineOrCurve) {
+		this.keyOfLineOrCurve = keyOfLineOrCurve;
 	}
+
+//	public int getIndexOfCurve() {
+//		return indexOfCurve;
+//	}
+//
+//	public void setIndexOfCurve(int indexOfCurve) {
+//		this.indexOfCurve = indexOfCurve;
+//	}
 	
 }

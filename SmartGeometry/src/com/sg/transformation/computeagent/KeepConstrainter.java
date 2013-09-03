@@ -225,48 +225,48 @@ public class KeepConstrainter {
 	 * 先将与中心曲线centerCurve约束的曲线curUnit平移transMatrix保持约束，再递归将所有与curUnit约束的曲线都平移transMatrix保持约束
 	 */
 	public void keepCurveConstraint(Graph curGraph, CurveUnit centerCurve) {
-		List<GUnit> units = curGraph.getGraph();
-		List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
-		CurveUnit curUnit;
-		GUnit temp;
-		int index;
-		float[][] transMatrix;
-		for(ConstraintStruct conStrut : constraintStructs) {
-			index = conStrut.getConstraintUnitIndex();
-			temp = units.get(index);
-			if(temp instanceof CurveUnit) {
-				curUnit = (CurveUnit) temp;
-				transMatrix = getTransMatrix(centerCurve, curUnit, conStrut.getConstraintType());
-				if(transMatrix != null) {
-					curUnit.translate(transMatrix);
-					CurveConstraintRecursion(units, curUnit, transMatrix, units.indexOf(centerCurve));
-				}
-			}
-			
-		}
+//		List<GUnit> units = curGraph.getGraph();
+//		List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
+//		CurveUnit curUnit;
+//		GUnit temp;
+//		int index;
+//		float[][] transMatrix;
+//		for(ConstraintStruct conStrut : constraintStructs) {
+//			index = conStrut.getConstraintUnitIndex();
+//			temp = units.get(index);
+//			if(temp instanceof CurveUnit) {
+//				curUnit = (CurveUnit) temp;
+//				transMatrix = getTransMatrix(centerCurve, curUnit, conStrut.getConstraintType());
+//				if(transMatrix != null) {
+//					curUnit.translate(transMatrix);
+//					CurveConstraintRecursion(units, curUnit, transMatrix, units.indexOf(centerCurve));
+//				}
+//			}
+//			
+//		}
 	}
 	
 	//递归将所都平移transMatrix保持约束
 	public void CurveConstraintRecursion(List<GUnit> units, CurveUnit centerCurve, float[][] transMatrix, int lastCenterIndex) {
-		List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
-		CurveUnit curUnit;
-		GUnit temp;
-		int index; 
-		for(ConstraintStruct conStrut : constraintStructs) {
-			index = conStrut.getConstraintUnitIndex();
-			if(index != lastCenterIndex) {
-				temp = units.get(index);
-				if(temp instanceof CurveUnit) {
-					curUnit = (CurveUnit) temp;
-					curUnit.translate(transMatrix);
-					CurveConstraintRecursion(units, curUnit, transMatrix, units.indexOf(centerCurve));
-				} else {
-					//圆的弦或者切线
-					temp.translate(transMatrix);
-				}
-				
-			}
-		}
+//		List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
+//		CurveUnit curUnit;
+//		GUnit temp;
+//		int index; 
+//		for(ConstraintStruct conStrut : constraintStructs) {
+//			index = conStrut.getConstraintUnitIndex();
+//			if(index != lastCenterIndex) {
+//				temp = units.get(index);
+//				if(temp instanceof CurveUnit) {
+//					curUnit = (CurveUnit) temp;
+//					curUnit.translate(transMatrix);
+//					CurveConstraintRecursion(units, curUnit, transMatrix, units.indexOf(centerCurve));
+//				} else {
+//					//圆的弦或者切线
+//					temp.translate(transMatrix);
+//				}
+//				
+//			}
+//		}
 	}
 	
 	//根据约束关系求出transMatrix

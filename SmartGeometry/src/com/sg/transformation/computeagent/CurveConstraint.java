@@ -37,10 +37,13 @@ public class CurveConstraint {
 				
 				constraintType = isExternallyOrInternallyTangentCircle((CurveUnit) unit, curUnit);
 				if(constraintType != ConstraintType.NONE) {
-					constraintGraph.buildGraph(curUnit);
+//					constraintGraph.buildGraph(curUnit);
 					constraintGraph.setGraphConstrainted(true);
-					((CurveUnit) unit).addConstraintStruct(new ConstraintStruct(constraintType, size));
-					curUnit.addConstraintStruct(new ConstraintStruct(constraintType, index));
+					curGraph.setGraphConstrainted(true);
+//					((CurveUnit) unit).addConstraintStruct(new ConstraintStruct(constraintType, size));
+//					curUnit.addConstraintStruct(new ConstraintStruct(constraintType, index));
+					constraintGraph.addConstraintStruct(new ConstraintStruct(constraintType, curGraph.getID()));
+					curGraph.addConstraintStruct(new ConstraintStruct(constraintType, constraintGraph.getID()));
 					return constraintGraph;
 				}
 			}
@@ -175,16 +178,21 @@ public class CurveConstraint {
 							pointUnit1.translate(transMatrix);
 							pointUnit1.setInLine(true);
 							pointUnit1.setCommonConstrainted(true);
+							pointUnit1.setKeyOfLineOrCurve(curGraph.getID());
 							pointUnit2.translate(transMatrix);
 							pointUnit2.setInLine(true);
 							pointUnit2.setCommonConstrainted(true);
+							pointUnit2.setKeyOfLineOrCurve(curGraph.getID());
 	
-							constraintGraph.buildGraph(pointUnit1);
-							constraintGraph.buildGraph(line);
+//							constraintGraph.buildGraph(pointUnit1);
+//							constraintGraph.buildGraph(line);
 							line.setTangentPoint(tangentPoint);
-							((CurveUnit) unit).addConstraintStruct(new ConstraintStruct(ConstraintType.TangentOfCircle, size+1));
-							constraintGraph.buildGraph(pointUnit2);
+//							((CurveUnit) unit).addConstraintStruct(new ConstraintStruct(ConstraintType.TangentOfCircle, size+1));
+//							constraintGraph.buildGraph(pointUnit2);
 							constraintGraph.setGraphConstrainted(true);
+							curGraph.setGraphConstrainted(true);
+							constraintGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.TangentOfCircle, curGraph.getID()));
+							curGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.TangentOfCircle, constraintGraph.getID()));
 							return constraintGraph;
 						}
 						
@@ -250,24 +258,34 @@ public class CurveConstraint {
 					if (p1 != null && p2 != null) {
 						pointUnit1.setX(p1.getX());
 						pointUnit1.setY(p1.getY());
-						if(p1 != center)
+						if(p1 != center) {
 							pointUnit1.setInCurve(true);
-						else
+							pointUnit1.setKeyOfLineOrCurve(constraintGraph.getID());
+						} else {
 							pointUnit1.setInLine(true);
-						pointUnit1.setIndexOfCurve(index);
+							pointUnit1.setKeyOfLineOrCurve(curGraph.getID());
+						}
+							
+//						pointUnit1.setIndexOfCurve(index);
 						pointUnit2.setX(p2.getX());
 						pointUnit2.setY(p2.getY());
-						if(p2 != center)
+						if(p2 != center) {
 							pointUnit2.setInCurve(true);
-						else
+							pointUnit2.setKeyOfLineOrCurve(constraintGraph.getID());
+						} else {
 							pointUnit2.setInLine(true);
-						pointUnit2.setIndexOfCurve(index);
+							pointUnit2.setKeyOfLineOrCurve(curGraph.getID());
+						}
+//						pointUnit2.setIndexOfCurve(index);
 						
-						constraintGraph.buildGraph(pointUnit1);
-						constraintGraph.buildGraph(linePoint.get(1));
-						((CurveUnit) unit).addConstraintStruct(new ConstraintStruct(ConstraintType.HypotenuseOfCircle, size+1));
-						constraintGraph.buildGraph(pointUnit2);
+//						constraintGraph.buildGraph(pointUnit1);
+//						constraintGraph.buildGraph(linePoint.get(1));
+//						((CurveUnit) unit).addConstraintStruct(new ConstraintStruct(ConstraintType.HypotenuseOfCircle, size+1));
+//						constraintGraph.buildGraph(pointUnit2);
 						constraintGraph.setGraphConstrainted(true);
+						curGraph.setGraphConstrainted(true);
+						constraintGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.HypotenuseOfCircle, curGraph.getID()));
+						curGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.HypotenuseOfCircle, constraintGraph.getID()));
 						return constraintGraph;
 					}
 
@@ -353,20 +371,26 @@ public class CurveConstraint {
 				pointUnit1.setX(p1.getX());
 				pointUnit1.setY(p1.getY());
 				pointUnit1.setInCurve(true);
-				pointUnit1.setIndexOfCurve(size);
+				pointUnit1.setKeyOfLineOrCurve(curGraph.getID());
+//				pointUnit1.setIndexOfCurve(size);
 				pointUnit2.setX(p2.getX());
 				pointUnit2.setY(p2.getY());
 				pointUnit2.setInCurve(true);
-				pointUnit2.setIndexOfCurve(size);
+				pointUnit2.setKeyOfLineOrCurve(curGraph.getID());
+//				pointUnit2.setIndexOfCurve(size);
 				pointUnit3.setX(p3.getX());
 				pointUnit3.setY(p3.getY());
 				pointUnit3.setInCurve(true);
-				pointUnit3.setIndexOfCurve(size);
-				constraintGraph.buildGraph(curUnit);
+				pointUnit3.setKeyOfLineOrCurve(curGraph.getID());
+//				pointUnit3.setIndexOfCurve(size);
+//				constraintGraph.buildGraph(curUnit);
 				((TriangleGraph) constraintGraph).setCurveConstrainted(0, true);
 				constraintGraph.setEqualAngleToF();
 				constraintGraph.setRightAngleToF();
 				constraintGraph.setGraphConstrainted(true);
+				curGraph.setGraphConstrainted(true);
+				constraintGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.CircumCircleOfTriangle, curGraph.getID()));
+				curGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.CircumCircleOfTriangle, constraintGraph.getID()));
 				KeepConstrainter.getInstance().keepInternallyTangentCircleOfTriangle(constraintGraph);
 				return constraintGraph;
 			}
@@ -411,11 +435,14 @@ public class CurveConstraint {
 //				pointUnit3.setX(x3);
 //				pointUnit3.setY(y3);
 				curUnit.setInternallyTangentCircleOfTriangle(true);
-				constraintGraph.buildGraph(curUnit);
+//				constraintGraph.buildGraph(curUnit);
 				((TriangleGraph) constraintGraph).setCurveConstrainted(1, true);
 				constraintGraph.setEqualAngleToF();
 				constraintGraph.setRightAngleToF();
 				constraintGraph.setGraphConstrainted(true);
+				curGraph.setGraphConstrainted(true);
+				constraintGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.InternallyTangentCircleOfTriangle, curGraph.getID()));
+				curGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.InternallyTangentCircleOfTriangle, constraintGraph.getID()));
 				KeepConstrainter.getInstance().keepInternallyTangentCircleOfTriangle(constraintGraph);
 				return constraintGraph;
 			}

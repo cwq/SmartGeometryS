@@ -76,21 +76,21 @@ public class GraphControl {
 		graphs = graphList.values();
 		for(Graph graph : graphs) {
 			if(graph.isInGraph(curPoint)) {
-				checkedGraph(graph, 0);
+				checkedGraph(graph, 0, true);
 				return graph;
 			}
 		}
 		return null;
 	}
 	
-	private void checkedGraph(Graph graph, long lastGraphKey) {
-		graph.setChecked(true);
+	public void checkedGraph(Graph graph, long lastGraphKey, boolean state) {
+		graph.setChecked(state);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
 			for(ConstraintStruct cons : constraintStructs) {
 				if(cons.getConstraintGraphKey() != lastGraphKey) {
 					Graph g = graphList.get(cons.getConstraintGraphKey());
-					checkedGraph(g, graph.getID());
+					checkedGraph(g, graph.getID(), state);
 				}
 				
 			}
@@ -114,14 +114,30 @@ public class GraphControl {
 	}
 	
 	public void deleteGraph(Graph graph) {
-		graphList.remove(graph.getID());
+		if(graph != null)
+			graphList.remove(graph.getID());
 //		if(graph instanceof LineGraph) {
 //			lines.remove((LineGraph) graph);
 //		}
 	}
 	
+	public void deleteConstraintedGraph(Graph graph, long lastGraphKey) {
+		deleteGraph(graph);
+		if(graph.isGraphConstrainted()) {
+			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
+			for(ConstraintStruct cons : constraintStructs) {
+				if(cons.getConstraintGraphKey() != lastGraphKey) {
+					Graph g = graphList.get(cons.getConstraintGraphKey());
+					deleteConstraintedGraph(g, graph.getID());
+				}
+				
+			}
+		}
+	}
+	
 	public void replaceGraph(Graph graph) {
-		graphList.replace(graph.getID(), graph);
+		if(graph != null)
+			graphList.replace(graph.getID(), graph);
 //		if(graph instanceof LineGraph) {
 //			for(int index = 0; index < lines.size(); index++) {
 //				if(lines.get(index).getID() == graph.getID()) {
@@ -135,6 +151,10 @@ public class GraphControl {
 	public void clearGraph() {
 		graphList.clear();
 //		lines.clear();
+	}
+	
+	public Graph getGraph(long key) {
+		return graphList.get(key);
 	}
 	
 	public Collection<Graph> getGraphList() {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.sg.control.GraphControl;
 import com.sg.logic.common.CommonFunc;
 import com.sg.object.Point;
 import com.sg.object.graph.CurveGraph;
@@ -28,7 +29,7 @@ public class LineStrategy implements TranslationStratery, Serializable{
 //	}
 	
 	//点在直线上移动
-	public static void translatePointInLine(GUnit unit, Graph graph, Point transPoint){
+	public static void translatePointInLine(GraphControl graphControl, GUnit unit, Graph graph, Point transPoint){
 		if(graph instanceof TriangleGraph){
 			int[] ver = new int[2];
 			List<GUnit> units = graph.getGraph();
@@ -94,11 +95,8 @@ public class LineStrategy implements TranslationStratery, Serializable{
 			((LineUnit)line).setProportion(a);
 			((LineUnit)line).getEndPointUnit().setX((float)xo);
 			((LineUnit)line).getEndPointUnit().setY((float)yo);
-		}
-		
-		//cai
-		if(graph instanceof CurveGraph) {
-			List<GUnit> units = graph.getGraph();
+		} else {
+			List<GUnit> units = graphControl.getGraph(((PointUnit)unit).getKeyOfLineOrCurve()).getGraph();
 			LineUnit line = null;
 			for(GUnit u : units) {
 				if(u instanceof LineUnit) {
@@ -124,6 +122,35 @@ public class LineStrategy implements TranslationStratery, Serializable{
 			}
 			
 		}
+//		
+//		//cai
+//		if(graph instanceof CurveGraph) {
+//			List<GUnit> units = graph.getGraph();
+//			LineUnit line = null;
+//			for(GUnit u : units) {
+//				if(u instanceof LineUnit) {
+//					if(((LineUnit)u).getStartPointUnit() == unit || ((LineUnit)u).getEndPointUnit() == unit) {
+//						line = (LineUnit) u;
+//						break;
+//					}
+//					
+//				}
+//			}
+//			if(line != null) {
+//				float x1 = transPoint.getX();
+//				float y1 = transPoint.getY();
+//				float x2 = line.getStartPointUnit().getX();
+//				float y2 = line.getStartPointUnit().getY();
+//				float x3 = line.getEndPointUnit().getX();
+//				float y3 = line.getEndPointUnit().getY();
+//				float k1 = (y2-y3)/(x2-x3);
+//				float x = (x1*(x2-x3)+(y2-k1*x2-y1)*(y3-y2))/(k1*(y2-y3)+x2-x3);
+//				float y = k1*(x-x2)+y2;
+//				((PointUnit)unit).setX(x);
+//				((PointUnit)unit).setY(y);
+//			}
+//			
+//		}
 	}
 	
 	@Override

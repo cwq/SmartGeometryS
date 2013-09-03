@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.sg.control.GraphControl;
 import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.CurveType;
 import com.sg.object.Point;
@@ -20,13 +21,13 @@ import com.sg.property.common.ThresholdProperty;
 public class CurveStrategy implements TranslationStratery, Serializable {
 	
 	//点在曲线线上移动
-	public static void translatePointInCurve(GUnit unit, Graph graph, Point transPoint){
+	public static void translatePointInCurve(GraphControl graphControl, GUnit unit, Point transPoint){
 //		CurveUnit curve = null;
 //		for(GUnit u : graph.getGraph()) {
 //			if(u instanceof CurveUnit && !((CurveUnit) u).isInternallyTangentCircleOfTriangle())
 //				curve = (CurveUnit) u;
 //		}
-		CurveUnit curve = (CurveUnit) graph.getGraph().get(((PointUnit)unit).getIndexOfCurve());
+		CurveUnit curve = (CurveUnit) graphControl.getGraph(((PointUnit)unit).getKeyOfLineOrCurve()).getGraph().get(0);
 		Point point = curve.getEndPoint(transPoint);
 		if(point != null) {
 			((PointUnit)unit).setX(point.getX());

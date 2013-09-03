@@ -556,6 +556,11 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				
 				//cai 2013.4.21
 				Graph tempGraph = curGraph = regulariser.regularise(graphControl, curGraph);  //图形规整
+				
+				//cai 2013.9.3
+				graphControl.addGraph(curGraph);
+				
+				
 				//图形约束
 				curGraph = constrainter.constraint(graphControl, curGraph);  // 对新构造的图形进一步约束识别
 				if(curGraph != null) { //有约束

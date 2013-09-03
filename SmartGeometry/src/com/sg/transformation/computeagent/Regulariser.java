@@ -78,13 +78,17 @@ public class Regulariser {
 				
 				PointUnit firstPoint = (PointUnit) units.get(0);
 				PointUnit lastPoint = (PointUnit) units.get(num - 1);
+				LineUnit lastLine = (LineUnit) units.get(num - 2);  //最后一个线元
+				boolean isStart = (lastLine.getStartPointUnit() == lastPoint);
 				double distance = CommonFunc.distance(firstPoint, lastPoint);
 				
 				if(distance < minDist) {
 
 					graphControl.deleteGraph(curGraph);
-					LineUnit lastLine = (LineUnit) units.get(num - 2);  //最后一个线元
-					lastLine.setEndPointUnit(firstPoint);
+					if(isStart)
+						lastLine.setStartPointUnit(firstPoint);
+					else
+						lastLine.setEndPointUnit(firstPoint);
 					units.remove(lastPoint);
 					//curGraph.setIsClosed(true);
 					

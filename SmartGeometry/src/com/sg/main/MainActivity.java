@@ -117,7 +117,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     private void initMenu() {
     	mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
     	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ThresholdProperty.BUTTON_WIDTH, LayoutParams.WRAP_CONTENT);
-    	Log.v("AAAAA", ThresholdProperty.BUTTON_WIDTH +"");
     	undo = (RadioButton)findViewById(R.id.undo);
     	redo = (RadioButton)findViewById(R.id.redo);
     	clear = (RadioButton)findViewById(R.id.clear);

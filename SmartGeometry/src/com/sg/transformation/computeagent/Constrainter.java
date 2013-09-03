@@ -50,13 +50,52 @@ public class Constrainter {
 		Graph constraintGraph = null;
 		//不闭合直线 先与 不闭合直线约束识别
 		if(curGraph instanceof LineGraph && !curGraph.isClosed()) {
+			boolean isALine = (curGraph.getGraph().size() == 3);
 			for(Graph graph : graphControl.getGraphList()) {
 				if(graph instanceof LineGraph && !graph.isClosed() && graph != curGraph) {
 					constraintGraph = lineToLineConstraint.lineToLineConstrain(graph, curGraph);
 					if(constraintGraph != null)
 						break;
 				}
+				//单条直线和三角形
+				if(isALine && graph instanceof TriangleGraph || graph instanceof RectangleGraph){  //如果是三角形或四边形（只写了直线与三角形）
+					constraintGraph = linearCloseConstraint.linearConstraint(graph, curGraph);
+					if(constraintGraph != null)
+						break;
+				}
 			}
+		}
+
+		if(constraintGraph != null){   //如果有约束
+			graphControl.deleteGraph(curGraph);
+			//如果约束后还是折线   第二次约束识别
+			if(constraintGraph instanceof LineGraph && !constraintGraph.isClosed()) {
+				Graph temp = constraintGraph;
+				Graph cons = null;
+				for(Graph graph : graphControl.getGraphList()) {
+					if(graph instanceof LineGraph && !graph.isClosed() && graph != temp) {
+						cons = lineToLineConstraint.lineToLineConstrain(graph, temp);
+						if(cons != null)
+							break;
+					}
+				}
+				if(cons != null){
+					graphControl.deleteGraph(temp);
+					constraintGraph = cons;
+				}
+			} 
+			Graph temp = lineToLineConstraint.rebuildLinearClose(graphControl, constraintGraph);  //重构三角形，四边形
+			if(temp == null)
+				temp = constraintGraph;
+			keepConstrainter.keepConstraint(temp);
+			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系
+				temp.setChecked(false);
+				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
+			}else{
+				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));
+			}
+			Log.v("有约束", "有约束");
+			return temp;
 		}
 		if(curGraph instanceof LineGraph && curGraph.getGraph().size() == 3) {      //对一条直线图进行约束识别
 			for(Graph graph : graphControl.getGraphList()) {
@@ -65,17 +104,17 @@ public class Constrainter {
 //					if(constraintGraph != null)
 //						break;
 //				}else{
-					if(graph instanceof TriangleGraph || graph instanceof RectangleGraph){  //如果是三角形或四边形（只写了直线与三角形）
-						constraintGraph = linearCloseConstraint.linearConstraint(graph, curGraph);
-						if(constraintGraph != null)
-							break;
-					} else {
+//					if(graph instanceof TriangleGraph || graph instanceof RectangleGraph){  //如果是三角形或四边形（只写了直线与三角形）
+//						constraintGraph = linearCloseConstraint.linearConstraint(graph, curGraph);
+//						if(constraintGraph != null)
+//							break;
+//					} else {
 						if(graph instanceof CurveGraph) { //直线和曲线
 							constraintGraph = curveConstraint.lineToCurveConstrain(graph, curGraph);
 							if(constraintGraph != null)
 								break;
 						}
-					}
+//					}
 //				}
 			}
 		}
@@ -144,7 +183,6 @@ public class Constrainter {
 				temp = constraintGraph;
 			keepConstrainter.keepConstraint(temp);
 			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系，则需删除curGraph
-				graphControl.deleteGraph(curGraph);
 				temp.setChecked(false);
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
 			}else{
@@ -154,7 +192,6 @@ public class Constrainter {
 			return temp;
 		}else{                        //如果没有约束关系
 			if(!curGraph.isChecked()) {            //如果curGraph没被选中，即是刚画上去的，则在图形链表添加
-				graphControl.addGraph(curGraph);
 				//if(curGraph instanceof Sketch){
 				//	URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CREATE, curGraph));
 				//}else{

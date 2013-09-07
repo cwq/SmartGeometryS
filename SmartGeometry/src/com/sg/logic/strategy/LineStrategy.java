@@ -29,7 +29,8 @@ public class LineStrategy implements TranslationStratery, Serializable{
 //	}
 	
 	//点在直线上移动
-	public static void translatePointInLine(GraphControl graphControl, GUnit unit, Graph graph, Point transPoint){
+	public static void translatePointInLine(GraphControl graphControl, GUnit unit, Point transPoint){
+		Graph graph = graphControl.getGraph(((PointUnit)unit).getKeyOfLineOrCurve());
 		if(graph instanceof TriangleGraph){
 			int[] ver = new int[2];
 			List<GUnit> units = graph.getGraph();
@@ -96,15 +97,12 @@ public class LineStrategy implements TranslationStratery, Serializable{
 			((LineUnit)line).getEndPointUnit().setX((float)xo);
 			((LineUnit)line).getEndPointUnit().setY((float)yo);
 		} else {
-			List<GUnit> units = graphControl.getGraph(((PointUnit)unit).getKeyOfLineOrCurve()).getGraph();
+			List<GUnit> units = graph.getGraph();
 			LineUnit line = null;
 			for(GUnit u : units) {
-				if(u instanceof LineUnit) {
-					if(((LineUnit)u).getStartPointUnit() == unit || ((LineUnit)u).getEndPointUnit() == unit) {
-						line = (LineUnit) u;
-						break;
-					}
-					
+				if(u instanceof LineUnit && u.getID() == ((PointUnit)unit).getIdOfLineOrCurve()) {
+					line = (LineUnit) u;
+					break;
 				}
 			}
 			if(line != null) {

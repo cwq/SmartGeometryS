@@ -23,7 +23,9 @@ public class PointUnit extends GUnit {
 	private boolean isInCurve; //点是否在曲线上
 //	private int indexOfCurve;  //所在曲线图元的下标
 	
-	private long keyOfLineOrCurve; ////点所在直线 曲线图的key
+	private long keyOfLineOrCurve; ////点所在直线 曲线图形的key
+	
+	private int idOfLineOrCurve; ////点所在直线 曲线图元的id
 	
 	private boolean isCommonConstrainted; //是否是一般约束点
 	private int mark;
@@ -93,10 +95,10 @@ public class PointUnit extends GUnit {
 
 	@Override
 	public void draw(Canvas canvas, Painter painter) {
-		if(!isInLine) {
+//		if(!isInLine) {
 			canvas.drawCircle(this.x, this.y, painter.getWidth()/2, painter.getPaint());
 			canvas.drawCircle(this.x, this.y, painter.getWidth()/4, painter.getPaint());
-		}
+//		}
 	}
 
 	/*
@@ -272,6 +274,14 @@ public class PointUnit extends GUnit {
 
 	public void setKeyOfLineOrCurve(long keyOfLineOrCurve) {
 		this.keyOfLineOrCurve = keyOfLineOrCurve;
+	}
+
+	public int getIdOfLineOrCurve() {
+		return idOfLineOrCurve;
+	}
+
+	public void setIdOfLineOrCurve(int idOfLineOrCurve) {
+		this.idOfLineOrCurve = idOfLineOrCurve;
 	}
 
 //	public int getIndexOfCurve() {

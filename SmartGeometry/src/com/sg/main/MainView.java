@@ -300,7 +300,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //							;
 //						else
 //							//拖动三角形一般约束线的点
-							LineStrategy.translatePointInLine(graphControl, curUnit, curGraph, new Point(touchX, touchY));
+							LineStrategy.translatePointInLine(graphControl, curUnit,new Point(touchX, touchY));
 						
 					} else {
 						if(((PointUnit)curUnit).isInCurve()) {
@@ -353,24 +353,27 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				curUnit = null;
 				
 				//cai 2013.4.21
-				Graph tempGraph = constrainter.constraint(graphControl, curGraph);
-				if(tempGraph != null){   //动态约束
-					//动态约束线删除原来图形 再传约束后的图形
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeDeleteGraph(curGraph);
-						mSynchronousThread.writeGraph(tempGraph);
+				if(!curGraph.isGraphConstrainted()) {
+					Graph tempGraph = constrainter.constraint(graphControl, curGraph);
+					if(tempGraph != null){   //动态约束
+						//动态约束线删除原来图形 再传约束后的图形
+						if(mSynchronousThread.isStart()) {
+							mSynchronousThread.writeDeleteGraph(curGraph);
+							mSynchronousThread.writeGraph(tempGraph);
+						}
+						
+						if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
+							//约束线用户意图推测
+							userIntentionReasoning.constraintReasoning(this,tempGraph, touchX, touchY);
+						}
+						
+						curGraph = null;
+						checkedGraph = null;
+						isEidt = false;
+						isChecked = false;
 					}
-					
-					if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
-						//约束线用户意图推测
-						userIntentionReasoning.constraintReasoning(this,tempGraph, touchX, touchY);
-					}
-					
-					curGraph = null;
-					checkedGraph = null;
-					isEidt = false;
-					isChecked = false;
 				}
+				
 				if(curGraph != null){
 					keepConstrainter.keepConstraint(curGraph);
 					if(mSynchronousThread.isStart()) {

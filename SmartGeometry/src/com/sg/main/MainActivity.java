@@ -182,6 +182,25 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         }
     }
     
+    private void clear() {
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	builder.setTitle("清除图形");
+    	builder.setMessage("确认清除所有图形？");
+    	builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+    		public void onClick(DialogInterface dialog, int whichButton) {
+    			mainView.clear();
+    		}
+    	});
+    	builder.setNegativeButton("取消", new DialogInterface.OnClickListener(){
+    		public void onClick(DialogInterface dialog, int whichButton) {
+    			
+    		}
+    	});
+    	AlertDialog dialog = builder.create();
+    	dialog.setCanceledOnTouchOutside(true);
+    	dialog.show();
+    }
+    
     private void exit() {
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setTitle("退出软件");
@@ -345,7 +364,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 			redo.setChecked(false);
 			break;
 		case R.id.clear:
-			mainView.clear();
+			clear();
 			clear.setChecked(false);
 			break;
 		case R.id.save:

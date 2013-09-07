@@ -59,23 +59,25 @@ public class Recognizer {
 			return graph;
 		}
 		
-//		unit = new CurveUnit(pList);
-//		if(unit.judge(pList)){
-//			graph = new CurveGraph(pList);
-//			return graph;
-//		}
+		unit = new CurveUnit(pList);
+		if(unit.judge(pList)){
+			graph = new CurveGraph(pList);
+			return graph;
+		}
 		
 		rebuildUnit(pList);
-		if(isSketch(unitList)) {
-			return null;
-		}
+//		if(isSketch(unitList)) {
+//			return null;
+//		}
 		if(isLineGraph(unitList)){
 			graph = rebuileLineGraph(pList);
+			return graph;
 		}else{
-			graph = new CurveGraph();
-			((CurveGraph)graph).bulidCurveGraph(unitList);
+//			graph = new CurveGraph();
+//			((CurveGraph)graph).bulidCurveGraph(unitList);
+			return null;
 		}
-		return graph;
+//		return graph;
 		/*
 		boolean isTriangle = rebuildTriangle(pList);
 		if(isTriangle) {

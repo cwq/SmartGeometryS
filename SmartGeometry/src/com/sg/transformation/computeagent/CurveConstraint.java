@@ -172,17 +172,19 @@ public class CurveConstraint {
 						PointUnit tangentPoint = new PointUnit(messageMatrix[1]+ messageMatrix[3], 
 								messageMatrix[2]+ messageMatrix[4]);
 						LineUnit line = (LineUnit) linePoint.get(1);
-						if(line.isInUnit(tangentPoint.getPoint())) {
+						if(line.isInUnit(tangentPoint.getPoint()) && (line.getTangentPoint() == null)) {
 							float[][] transMatrix = {{1,0,messageMatrix[3]},
 									{0,1,messageMatrix[4]}, {0,0,1}};
 							pointUnit1.translate(transMatrix);
 							pointUnit1.setInLine(true);
 							pointUnit1.setCommonConstrainted(true);
 							pointUnit1.setKeyOfLineOrCurve(curGraph.getID());
+							pointUnit1.setIdOfLineOrCurve(line.getID());
 							pointUnit2.translate(transMatrix);
 							pointUnit2.setInLine(true);
 							pointUnit2.setCommonConstrainted(true);
 							pointUnit2.setKeyOfLineOrCurve(curGraph.getID());
+							pointUnit2.setIdOfLineOrCurve(line.getID());
 	
 //							constraintGraph.buildGraph(pointUnit1);
 //							constraintGraph.buildGraph(line);
@@ -261,6 +263,7 @@ public class CurveConstraint {
 						if(p1 != center) {
 							pointUnit1.setInCurve(true);
 							pointUnit1.setKeyOfLineOrCurve(constraintGraph.getID());
+							pointUnit1.setIdOfLineOrCurve(unit.getID());
 						} else {
 							pointUnit1.setInLine(true);
 							pointUnit1.setKeyOfLineOrCurve(curGraph.getID());
@@ -272,6 +275,7 @@ public class CurveConstraint {
 						if(p2 != center) {
 							pointUnit2.setInCurve(true);
 							pointUnit2.setKeyOfLineOrCurve(constraintGraph.getID());
+							pointUnit2.setIdOfLineOrCurve(unit.getID());
 						} else {
 							pointUnit2.setInLine(true);
 							pointUnit2.setKeyOfLineOrCurve(curGraph.getID());
@@ -372,16 +376,19 @@ public class CurveConstraint {
 				pointUnit1.setY(p1.getY());
 				pointUnit1.setInCurve(true);
 				pointUnit1.setKeyOfLineOrCurve(curGraph.getID());
+				pointUnit1.setIdOfLineOrCurve(curUnit.getID());
 //				pointUnit1.setIndexOfCurve(size);
 				pointUnit2.setX(p2.getX());
 				pointUnit2.setY(p2.getY());
 				pointUnit2.setInCurve(true);
 				pointUnit2.setKeyOfLineOrCurve(curGraph.getID());
+				pointUnit2.setIdOfLineOrCurve(curUnit.getID());
 //				pointUnit2.setIndexOfCurve(size);
 				pointUnit3.setX(p3.getX());
 				pointUnit3.setY(p3.getY());
 				pointUnit3.setInCurve(true);
 				pointUnit3.setKeyOfLineOrCurve(curGraph.getID());
+				pointUnit3.setIdOfLineOrCurve(curUnit.getID());
 //				pointUnit3.setIndexOfCurve(size);
 //				constraintGraph.buildGraph(curUnit);
 				((TriangleGraph) constraintGraph).setCurveConstrainted(0, true);

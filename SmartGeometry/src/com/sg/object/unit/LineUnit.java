@@ -42,6 +42,7 @@ public class LineUnit extends GUnit implements Serializable{
 	
 	public LineUnit() {
 		isDrag = false;
+		tangentPoint = null;
 	}
 
 //	public LineUnit(Point startPoint, Point endPoint) {
@@ -54,6 +55,7 @@ public class LineUnit extends GUnit implements Serializable{
 		this.endPointUnit = new PointUnit(pList.get(pList.size() - 1));
 		increaseDegree();
 		isDrag = false;
+		tangentPoint = null;
 	}
 	
 	public LineUnit(PointUnit startPointUnit, PointUnit endPointUnit) {
@@ -61,6 +63,7 @@ public class LineUnit extends GUnit implements Serializable{
 		this.endPointUnit = endPointUnit;
 		increaseDegree();
 		isDrag = false;
+		tangentPoint = null;
 	}
 	
 	private void increaseDegree() {
@@ -89,23 +92,23 @@ public class LineUnit extends GUnit implements Serializable{
 		}
 		canvas.drawLine(startPointUnit.getPoint().getX(), startPointUnit.getPoint().getY(), 
 				endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), painter.getPaint());
-		specialPainter.setWidth(ThresholdProperty.DRAW_WIDTH+2);
-		switch(Type){
-			case 2:{
-				canvas.drawPoint(startPointUnit.getPoint().getX(), startPointUnit.getPoint().getY(), specialPainter.getPaint());
-				canvas.drawPoint(endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), specialPainter.getPaint());
-				break;
-			}
-			case 1:{
-				//canvas.drawPoint(endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), specialPainter.getPaint());
-				//break;
-			}
-			case 3:
-			case 4:
-			case 5:{
-				canvas.drawPoint(endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), specialPainter.getPaint());
-			}
-		}
+//		specialPainter.setWidth(ThresholdProperty.DRAW_WIDTH+2);
+//		switch(Type){
+//			case 2:{
+////				canvas.drawPoint(startPointUnit.getPoint().getX(), startPointUnit.getPoint().getY(), specialPainter.getPaint());
+////				canvas.drawPoint(endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), specialPainter.getPaint());
+//				break;
+//			}
+//			case 1:{
+//				//canvas.drawPoint(endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), specialPainter.getPaint());
+//				//break;
+//			}
+//			case 3:
+//			case 4:
+//			case 5:{
+//				canvas.drawPoint(endPointUnit.getPoint().getX(), endPointUnit.getPoint().getY(), specialPainter.getPaint());
+//			}
+//		}
 		
 	}
 

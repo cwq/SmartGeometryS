@@ -290,6 +290,8 @@ public class LinearCloseConstraint {
 									verPoint.setMark(0);      //记录一般约束线的顶点
 									verPoint.setInLine(true);		//标记
 									verPoint.setCommonConstrainted(true);
+									verPoint.setKeyOfLineOrCurve(graph.getID());
+									verPoint.setIdOfLineOrCurve(units.get(3).getID());
 									LineUnit line = new LineUnit(point1,verPoint);
 									line.setType(5);
 									line.setVer(0);
@@ -380,6 +382,8 @@ public class LinearCloseConstraint {
 									verPoint.setMark(2);		//记录一般约束线的顶点
 									verPoint.setInLine(true);		//标记
 									verPoint.setCommonConstrainted(true);
+									verPoint.setKeyOfLineOrCurve(graph.getID());
+									verPoint.setIdOfLineOrCurve(units.get(5).getID());
 									LineUnit line = new LineUnit(point2,verPoint);
 									line.setType(5);
 									line.setVer(2);
@@ -470,6 +474,8 @@ public class LinearCloseConstraint {
 									verPoint.setMark(4);		//记录一般约束线的顶点
 									verPoint.setInLine(true);		//标记
 									verPoint.setCommonConstrainted(true);
+									verPoint.setKeyOfLineOrCurve(graph.getID());
+									verPoint.setIdOfLineOrCurve(units.get(1).getID());
 									LineUnit line = new LineUnit(point3,verPoint);
 									line.setType(5);
 									line.setVer(4);

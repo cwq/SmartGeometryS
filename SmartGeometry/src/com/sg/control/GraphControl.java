@@ -5,18 +5,15 @@
 
 package com.sg.control;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import android.R.integer;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.graph.Graph;
-import com.sg.object.graph.LineGraph;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 import com.sg.transformation.recognizer.Recognizer;
@@ -25,7 +22,6 @@ public class GraphControl {
 	
 	private ConcurrentHashMap<Long,Graph> graphList;
 	private Collection<Graph> graphs;
-//	private List<LineGraph> lines;
 	
 	private Painter painter;
 	private Painter checkedPainter;
@@ -35,7 +31,6 @@ public class GraphControl {
 	
 	public GraphControl() {
 		graphList = new ConcurrentHashMap<Long,Graph>();
-//		lines = new ArrayList<LineGraph>();
 		recognizer = new Recognizer();
 		painter = new Painter(Color.BLACK, ThresholdProperty.DRAW_WIDTH);
 		checkedPainter = new Painter(Color.RED, ThresholdProperty.DRAW_WIDTH);
@@ -107,20 +102,23 @@ public class GraphControl {
 	public void addGraph(Graph graph) {
 		if(graph != null && !graphList.containsKey(graph.getID())) {
 			graphList.put(graph.getID(), graph);
-//			if(graph instanceof LineGraph) {
-//				lines.add((LineGraph) graph);
-//			}
 		}
 	}
 	
+	/**
+	 * 删除单个图形
+	 * @param graph
+	 */
 	public void deleteGraph(Graph graph) {
 		if(graph != null)
 			graphList.remove(graph.getID());
-//		if(graph instanceof LineGraph) {
-//			lines.remove((LineGraph) graph);
-//		}
 	}
 	
+	/**
+	 * 删除约束图形
+	 * @param graph
+	 * @param lastGraphKey
+	 */
 	public void deleteConstraintedGraph(Graph graph, long lastGraphKey) {
 		deleteGraph(graph);
 		if(graph.isGraphConstrainted()) {
@@ -138,19 +136,10 @@ public class GraphControl {
 	public void replaceGraph(Graph graph) {
 		if(graph != null)
 			graphList.replace(graph.getID(), graph);
-//		if(graph instanceof LineGraph) {
-//			for(int index = 0; index < lines.size(); index++) {
-//				if(lines.get(index).getID() == graph.getID()) {
-//					lines.set(index, (LineGraph) graph);
-//					break;
-//				}
-//			}
-//		}
 	}
 	
 	public void clearGraph() {
 		graphList.clear();
-//		lines.clear();
 	}
 	
 	public Graph getGraph(long key) {
@@ -165,19 +154,22 @@ public class GraphControl {
 		return graphList;
 	}
 	
-//	public List<LineGraph> getLines() {
-//		return lines;
-//	}
-	
 	public void setConcurrentHashMap(ConcurrentHashMap<Long,Graph> graphList) {
 		this.graphList = graphList;
-//		lines.clear();
-//		graphs = graphList.values();
-//		for(Graph graph : graphs) {
-//			if(graph instanceof LineGraph) {
-//				lines.add((LineGraph) graph);
-//			}
-//		}
+	}
+	
+	public void translateGraph(Graph graph, float[][] transMatrix, long lastGraphKey) {
+		graph.translate(graph, transMatrix);
+		if(graph.isGraphConstrainted()) {
+			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
+			for(ConstraintStruct cons : constraintStructs) {
+				if(cons.getConstraintGraphKey() != lastGraphKey) {
+					Graph g = graphList.get(cons.getConstraintGraphKey());
+					translateGraph(g, transMatrix, graph.getID());
+				}
+				
+			}
+		}
 	}
 
 }

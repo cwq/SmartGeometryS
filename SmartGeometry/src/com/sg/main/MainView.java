@@ -322,7 +322,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					}
 					Log.v("拖拽点", "拖拽点");
 				}else{
-					curGraph.translate(curGraph, transMatrix);
+//					curGraph.translate(curGraph, transMatrix);
+					graphControl.translateGraph(curGraph, transMatrix, 0);
 				}
 				keepConstrainter.keepConstraint(curGraph);	
 				

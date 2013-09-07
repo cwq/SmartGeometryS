@@ -46,9 +46,16 @@ public class CurveStrategy implements TranslationStratery, Serializable {
 		 */
 		// TODO Auto-generated method stub
 		List<GUnit> gUnit = graph.getGraph();
-		for(GUnit unit : gUnit) {
-			if(!(unit instanceof PointUnit))
+		PointUnit tangPoint = null;
+		for(GUnit unit : gUnit){
+			if(unit instanceof LineUnit){
+				tangPoint = ((LineUnit) unit).getTangentPoint();
+				if(tangPoint != null) {
+					tangPoint.translate(transMatrix);
+				}
+			} else {
 				unit.translate(transMatrix);
+			}
 		}
 	}
 
@@ -114,10 +121,18 @@ public class CurveStrategy implements TranslationStratery, Serializable {
 //			}
 		} else {
 			translationCenter = findTranslationCenter(graph);
+			PointUnit tangPoint = null;
 			//变换
 			for(GUnit unit : graph.getGraph()){
-				if(!(unit instanceof PointUnit))
+				if(unit instanceof LineUnit){
+					tangPoint = ((LineUnit) unit).getTangentPoint();
+					if(tangPoint != null) {
+						tangPoint.scale(scaleMatrix, translationCenter);
+					}
+				} else {
+					//将图形点坐标化为相对于中心的坐标，矩阵变换之后再还原为系统坐标
 					unit.scale(scaleMatrix, translationCenter);
+				}
 			}
 		}
 
@@ -143,9 +158,17 @@ public class CurveStrategy implements TranslationStratery, Serializable {
 		}
 		
 		//变换
+		PointUnit tangPoint = null;
 		for(GUnit unit : graph.getGraph()){
-			if(!(unit instanceof PointUnit))
+			if(unit instanceof LineUnit){
+				tangPoint = ((LineUnit) unit).getTangentPoint();
+				if(tangPoint != null) {
+					tangPoint.rotate(rotateMatrix, translationCenter);
+				}
+			} else {
+				//将图形点坐标化为相对于中心的坐标，矩阵变换之后再还原为系统坐标
 				unit.rotate(rotateMatrix, translationCenter);
+			}
 		}
 	}
 	

@@ -160,8 +160,14 @@ public class LineStrategy implements TranslationStratery, Serializable{
 		 * 点坐标为（x,y,1）
 		 */
 		List<GUnit> gUnit = graph.getGraph();
+		PointUnit tangPoint = null;
 		for(GUnit unit : gUnit){
-			if(!(unit instanceof LineUnit)){
+			if(unit instanceof LineUnit){
+				tangPoint = ((LineUnit) unit).getTangentPoint();
+				if(tangPoint != null) {
+					tangPoint.translate(transMatrix);
+				}
+			} else {
 				unit.translate(transMatrix);
 			}
 		}
@@ -192,9 +198,15 @@ public class LineStrategy implements TranslationStratery, Serializable{
 				translationCenter = findTranslationCenter(graph);
 			}
 			
+			PointUnit tangPoint = null;
 			//变换
 			for(GUnit unit : graph.getGraph()){
-				if(!(unit instanceof LineUnit)){
+				if(unit instanceof LineUnit){
+					tangPoint = ((LineUnit) unit).getTangentPoint();
+					if(tangPoint != null) {
+						tangPoint.scale(scaleMatrix, translationCenter);
+					}
+				} else {
 					//将图形点坐标化为相对于中心的坐标，矩阵变换之后再还原为系统坐标
 					unit.scale(scaleMatrix, translationCenter);
 				}
@@ -225,16 +237,16 @@ public class LineStrategy implements TranslationStratery, Serializable{
 			}
 			
 			//变换
-//			float tempX;
-//			float tempY;
+			PointUnit tangPoint = null;
 			for(GUnit unit : graph.getGraph()){
-				if(!(unit instanceof LineUnit)){
+				if(unit instanceof LineUnit){
+					tangPoint = ((LineUnit) unit).getTangentPoint();
+					if(tangPoint != null) {
+						tangPoint.rotate(rotateMatrix, translationCenter);
+					}
+				} else {
 					//将图形点坐标化为相对于中心的坐标，矩阵变换之后再还原为系统坐标
 					unit.rotate(rotateMatrix, translationCenter);
-//					tempX = ((PointUnit)unit).getX() - x;
-//					tempY = ((PointUnit)unit).getY() - y;
-//					((PointUnit)unit).setX((tempX * rotateMatrix[0][0] + tempY * rotateMatrix[0][1]) + x);
-//					((PointUnit)unit).setY((tempX * rotateMatrix[1][0] + tempY * rotateMatrix[1][1]) + y);
 				}
 			}
 		}

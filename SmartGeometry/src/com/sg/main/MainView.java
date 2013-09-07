@@ -435,24 +435,26 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						isChecked = true;
 						curGraph = checkedGraph;
 						//cai 2013.4.21
-						Graph tempGraph = constrainter.constraint(graphControl, curGraph);
-						if(tempGraph != null){   //动态约束
-							//动态约束线删除原来图形 再传约束后的图形
-							if(mSynchronousThread.isStart()) {
-								mSynchronousThread.writeDeleteGraph(curGraph);
-								mSynchronousThread.writeGraph(tempGraph);
+						if(!curGraph.isGraphConstrainted()) {
+							Graph tempGraph = constrainter.constraint(graphControl, curGraph);
+							if(tempGraph != null){   //动态约束
+								//动态约束线删除原来图形 再传约束后的图形
+								if(mSynchronousThread.isStart()) {
+									mSynchronousThread.writeDeleteGraph(curGraph);
+									mSynchronousThread.writeGraph(tempGraph);
+								}
+								
+								if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
+									//约束线用户意图推测
+									userIntentionReasoning.constraintReasoning(this,tempGraph, touchX, touchY);
+								}
+								
+								
+								curGraph = null;
+								checkedGraph = null;
+								isEidt = false;
+								isChecked = false;
 							}
-							
-							if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
-								//约束线用户意图推测
-								userIntentionReasoning.constraintReasoning(this,tempGraph, touchX, touchY);
-							}
-							
-							
-							curGraph = null;
-							checkedGraph = null;
-							isEidt = false;
-							isChecked = false;
 						}
 						if(curGraph != null){
 							//keepConstrainter.keepConstraint(curGraph);

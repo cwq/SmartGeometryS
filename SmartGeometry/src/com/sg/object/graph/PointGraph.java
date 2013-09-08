@@ -2,17 +2,10 @@ package com.sg.object.graph;
 
 import java.io.Serializable;
 
-import com.sg.logic.strategy.LineStrategy;
-import com.sg.object.Point;
-import com.sg.object.unit.GUnit;
-import com.sg.property.tools.Painter;
-
-import android.graphics.Canvas;
-
 public class PointGraph extends Graph implements Serializable{
 
 	public PointGraph() {
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 	}
 	
 	/*

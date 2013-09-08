@@ -7,12 +7,10 @@ import java.util.List;
 import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.CurveType;
 import com.sg.object.Point;
-import com.sg.object.constraint.ConstraintStruct;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
 import android.graphics.Canvas;
-import android.graphics.RectF;
 import android.util.Log;
 
 public class CurveUnit extends GUnit implements Serializable {

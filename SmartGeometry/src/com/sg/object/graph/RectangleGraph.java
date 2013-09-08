@@ -3,8 +3,6 @@ package com.sg.object.graph;
 import java.io.Serializable;
 import java.util.List;
 
-import com.sg.logic.strategy.LineStrategy;
-import com.sg.object.Point;
 import com.sg.object.unit.GUnit;
 import com.sg.property.tools.Painter;
 
@@ -16,12 +14,12 @@ public class RectangleGraph extends Graph implements Serializable{
 	 * */
 	public RectangleGraph() {
 		isClosed = true;
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 	}
 	
 	public RectangleGraph(List<GUnit> units) {
 		isClosed = true;
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 		for(GUnit unit : units) {
 			buildGraph(unit);
 		} 

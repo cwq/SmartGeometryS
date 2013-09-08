@@ -3,14 +3,10 @@ package com.sg.object.graph;
 import java.io.Serializable;
 import java.util.List;
 
-import com.sg.logic.strategy.LineStrategy;
 import com.sg.object.Point;
 import com.sg.object.unit.GUnit;
 import com.sg.object.unit.LineUnit;
 import com.sg.object.unit.PointUnit;
-import com.sg.property.tools.Painter;
-
-import android.graphics.Canvas;
 
 public class LineGraph extends Graph implements Serializable {
 	
@@ -28,11 +24,11 @@ public class LineGraph extends Graph implements Serializable {
 		graph.add(lineUnit);
 		graph.add(endUnit);
 		
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 	}
 
 	public LineGraph() {
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 	}
 	
 	//构造折线图形

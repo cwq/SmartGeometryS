@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.sg.object.Point;
-import com.sg.object.graph.Graph;
 import com.sg.property.tools.Painter;
 
 import android.graphics.Canvas;

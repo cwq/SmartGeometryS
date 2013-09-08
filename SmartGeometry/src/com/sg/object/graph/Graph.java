@@ -8,7 +8,6 @@ import java.util.Vector;
 
 import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.VectorFunc;
-import com.sg.logic.strategy.TranslationStratery;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.unit.*;
@@ -51,7 +50,7 @@ public abstract class Graph implements Cloneable, Serializable {
 	
 	protected long id;
 	
-	protected TranslationStratery translationStratery;      //在具体类中实例化
+//	protected TranslationStratery translationStratery;      //在具体类中实例化
 
 	protected boolean isGraphConstrainted;  //图形是否有约束
 	
@@ -235,28 +234,63 @@ public abstract class Graph implements Cloneable, Serializable {
 	/*
 	 * 平移，通过平移矩阵，对图形中的各个图元进行变换，图元的变换：对关键的平移
 	 * */
-	public void translate(Graph graph, float[][] transMatrix) {
-		if(graph instanceof Sketch)
+	public void translate(float[][] transMatrix) {
+//		translationStratery.translate(graph, transMatrix);
+		if(this instanceof Sketch)
 			return;
-		translationStratery.translate(graph, transMatrix);
+		PointUnit tangPoint = null;
+		for(GUnit unit : graph){
+			if(unit instanceof LineUnit){
+				tangPoint = ((LineUnit) unit).getTangentPoint();
+				if(tangPoint != null) {
+					tangPoint.translate(transMatrix);
+				}
+			} else {
+				unit.translate(transMatrix);
+			}
+		}
 	} 
 	
 	/*
 	 * 伸缩，通过伸缩矩阵操作
 	 * */
-	public void scale(Graph graph, float[][] scaleMatrix, CurveUnit centerCurve) {
-		if(graph instanceof Sketch)
+	public void scale(float[][] scaleMatrix, Point translationCenter) {
+		if(this instanceof Sketch || this instanceof PointGraph)
 			return;
-		translationStratery.scale(graph, scaleMatrix, centerCurve);
+		PointUnit tangPoint = null;
+		//变换
+		for(GUnit unit : graph){
+			if(unit instanceof LineUnit){
+				tangPoint = ((LineUnit) unit).getTangentPoint();
+				if(tangPoint != null) {
+					tangPoint.scale(scaleMatrix, translationCenter);
+				}
+			} else {
+				//将图形点坐标化为相对于中心的坐标，矩阵变换之后再还原为系统坐标
+				unit.scale(scaleMatrix, translationCenter);
+			}
+		}
 	}
 	
 	/*
 	 * 旋转，通过旋转矩阵计算操作
 	 * */
-	public void rotate(Graph graph, float[][] rotateMatrix, CurveUnit centerCurve) {
-		if(graph instanceof Sketch)
+	public void rotate(float[][] rotateMatrix, Point translationCenter) {
+		if(this instanceof Sketch || this instanceof PointGraph)
 			return;
-		translationStratery.rotate(graph, rotateMatrix, centerCurve);
+//		translationStratery.rotate(graph, rotateMatrix, centerCurve);
+		PointUnit tangPoint = null;
+		for(GUnit unit : graph){
+			if(unit instanceof LineUnit){
+				tangPoint = ((LineUnit) unit).getTangentPoint();
+				if(tangPoint != null) {
+					tangPoint.rotate(rotateMatrix, translationCenter);
+				}
+			} else {
+				//将图形点坐标化为相对于中心的坐标，矩阵变换之后再还原为系统坐标
+				unit.rotate(rotateMatrix, translationCenter);
+			}
+		}
 	}
 	
 	/*

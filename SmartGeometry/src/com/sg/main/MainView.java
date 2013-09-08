@@ -13,8 +13,7 @@ import com.sg.control.UndoRedoSolver;
 import com.sg.control.UndoRedoStruct;
 import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.VectorFunc;
-import com.sg.logic.strategy.CurveStrategy;
-import com.sg.logic.strategy.LineStrategy;
+import com.sg.logic.strategy.TranslationStratery;
 import com.sg.object.Point;
 import com.sg.object.graph.LineGraph;
 import com.sg.object.graph.Sketch;
@@ -300,12 +299,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //							;
 //						else
 //							//拖动三角形一般约束线的点
-							LineStrategy.translatePointInLine(graphControl, curUnit,new Point(touchX, touchY));
+						TranslationStratery.translatePointInLine(graphControl, curUnit,new Point(touchX, touchY));
 						
 					} else {
 						if(((PointUnit)curUnit).isInCurve()) {
 							//拖拽在曲线上的点
-							CurveStrategy.translatePointInCurve(graphControl, curUnit, new Point(touchX, touchY));
+							TranslationStratery.translatePointInCurve(graphControl, curUnit, new Point(touchX, touchY));
 							keepConstrainter.keepInternallyTangentCircleOfTriangle(curGraph);
 						} else {
 							if(curGraph instanceof TriangleGraph && ((TriangleGraph)curGraph).isCurveConstrainted()) {
@@ -668,12 +667,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 									float[][] transMatrixscalenarrow = {{(float) 0.9, 0, 0}, 
 																		{0, (float) 0.9, 0}, 
 																		{0, 0, 1}}; //缩小矩阵
-									checkedGraph.scale(checkedGraph, transMatrixscalenarrow, centerCurve);
+//									checkedGraph.scale(checkedGraph, transMatrixscalenarrow, centerCurve);
+									graphControl.scaleGraph(checkedGraph, transMatrixscalenarrow, TranslationStratery.findTranslationCenter(checkedGraph), 0);
 								}else{
 									float[][] transMatrixscaleenlarge = {{(float) 1.13, 0, 0}, 
 																		  {0, (float) 1.13, 0}, 
 																		  {0, 0, 1}};	//放大矩阵
-									checkedGraph.scale(checkedGraph, transMatrixscaleenlarge, centerCurve);
+//									checkedGraph.scale(checkedGraph, transMatrixscaleenlarge, centerCurve);
+									graphControl.scaleGraph(checkedGraph, transMatrixscaleenlarge, TranslationStratery.findTranslationCenter(checkedGraph), 0);
 								}
 								if(centerCurve != null) {
 									keepConstrainter.keepCurveConstraint(checkedGraph, centerCurve);
@@ -692,13 +693,15 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 									float[][] rotateMatrix = {{cosA, -sinA, 0}, 
 															   {sinA, cosA, 0}, 
 															   {0, 0, 1}};	 //逆时针旋转矩阵
-									checkedGraph.rotate(checkedGraph, rotateMatrix, centerCurve);
+//									checkedGraph.rotate(checkedGraph, rotateMatrix, centerCurve);
+									graphControl.rotateGraph(checkedGraph, rotateMatrix, TranslationStratery.findTranslationCenter(checkedGraph), 0);
 									Log.v("translate", "alongrotate");
 								}else{
 									float[][] rotateMatrix = {{cosA, sinA, 0}, 
 															   {-sinA, cosA, 0}, 
 															   {0, 0, 1}};	//顺时针旋转矩阵
-									checkedGraph.rotate(checkedGraph, rotateMatrix, centerCurve);
+//									checkedGraph.rotate(checkedGraph, rotateMatrix, centerCurve);
+									graphControl.rotateGraph(checkedGraph, rotateMatrix, TranslationStratery.findTranslationCenter(checkedGraph), 0);
 									Log.v("translate", "wiserrotate");
 								}
 								//cai 2013.4.22

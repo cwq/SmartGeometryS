@@ -3,14 +3,10 @@ package com.sg.object.unit;
 import java.util.List;
 
 import com.sg.logic.common.CommonFunc;
-import com.sg.logic.strategy.LineStrategy;
-import com.sg.logic.strategy.TranslationStratery;
 import com.sg.object.Point;
-import com.sg.object.graph.Graph;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
-import android.R.integer;
 import android.graphics.Canvas;
 
 public class PointUnit extends GUnit {

@@ -48,9 +48,9 @@ public class ThresholdProperty {
 		POINT_DISTANCE = 8 * density;
 		POINT_SELECTED_DISTANCE = 20 * density;
 		JUDGE_LINE_VALUE = 0.9;
-		PRESS_TIME_SHORT = 300;
+		PRESS_TIME_SHORT = 200;
 		PRESS_TIME_LONG = 1000;
-		GRAPH_CHECKED_DISTANCE = 20 * density;
+		GRAPH_CHECKED_DISTANCE = 30 * density;
 		TWO_POINT_IS_CLOSED = 50 * density;
 		TWO_POINT_IS_CONSTRAINTED = 30 * density;
 		DRAW_WIDTH = 3 * density;

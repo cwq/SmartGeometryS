@@ -3,9 +3,6 @@ package com.sg.object.graph;
 import java.io.Serializable;
 import java.util.List;
 
-import com.sg.logic.common.CommonFunc;
-import com.sg.logic.strategy.LineStrategy;
-import com.sg.object.Point;
 import com.sg.object.unit.GUnit;
 import com.sg.object.unit.PointUnit;
 import com.sg.object.unit.LineUnit;
@@ -14,8 +11,6 @@ import com.sg.property.tools.Painter;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.Log;
 
 public class TriangleGraph extends Graph implements Serializable{
 	
@@ -34,7 +29,7 @@ public class TriangleGraph extends Graph implements Serializable{
 	 * */
 	public TriangleGraph() {
 		isClosed = true;
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 		for(int i=0; i<3; i++){
 			Vertical[i]=true;
 			Median[i]=true;
@@ -45,7 +40,7 @@ public class TriangleGraph extends Graph implements Serializable{
 	
 	public TriangleGraph(List<GUnit> units) {
 		isClosed = true;
-		translationStratery = new LineStrategy();  //选择线变换策略
+//		translationStratery = new LineStrategy();  //选择线变换策略
 		
 		for(GUnit unit : units) {
 			buildGraph(unit);

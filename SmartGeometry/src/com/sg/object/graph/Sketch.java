@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.sg.logic.common.CommonFunc;
 import com.sg.object.Point;
-import com.sg.object.unit.GUnit;
-import com.sg.property.common.GType;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 

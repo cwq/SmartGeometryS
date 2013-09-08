@@ -14,6 +14,7 @@ import android.graphics.Color;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.graph.Graph;
+import com.sg.object.unit.CurveUnit;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 import com.sg.transformation.recognizer.Recognizer;
@@ -71,8 +72,9 @@ public class GraphControl {
 		graphs = graphList.values();
 		for(Graph graph : graphs) {
 			if(graph.isInGraph(curPoint)) {
+				Graph tempGraph = graph;
 				checkedGraph(graph, 0, true);
-				return graph;
+				return tempGraph;
 			}
 		}
 		return null;
@@ -158,14 +160,62 @@ public class GraphControl {
 		this.graphList = graphList;
 	}
 	
+	/**
+	 * 平移约束图形
+	 * @param graph
+	 * @param transMatrix
+	 * @param lastGraphKey
+	 */
 	public void translateGraph(Graph graph, float[][] transMatrix, long lastGraphKey) {
-		graph.translate(graph, transMatrix);
+		graph.translate(transMatrix);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
 			for(ConstraintStruct cons : constraintStructs) {
 				if(cons.getConstraintGraphKey() != lastGraphKey) {
 					Graph g = graphList.get(cons.getConstraintGraphKey());
 					translateGraph(g, transMatrix, graph.getID());
+				}
+				
+			}
+		}
+	}
+	
+	/**
+	 * 缩放约束图形
+	 * @param graph
+	 * @param scaleMatrix
+	 * @param centerGraph
+	 * @param lastGraphKey
+	 */
+	public void scaleGraph(Graph graph, float[][] scaleMatrix, Point translationCenter, long lastGraphKey) {
+		graph.scale(scaleMatrix, translationCenter);
+		if(graph.isGraphConstrainted()) {
+			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
+			for(ConstraintStruct cons : constraintStructs) {
+				if(cons.getConstraintGraphKey() != lastGraphKey) {
+					Graph g = graphList.get(cons.getConstraintGraphKey());
+					scaleGraph(g, scaleMatrix ,translationCenter, graph.getID());
+				}
+				
+			}
+		}
+	}
+	
+	/**
+	 * 旋转约束图形
+	 * @param graph
+	 * @param rotateMatrix
+	 * @param translationCenter
+	 * @param lastGraphKey
+	 */
+	public void rotateGraph(Graph graph, float[][] rotateMatrix, Point translationCenter, long lastGraphKey) {
+		graph.rotate(rotateMatrix, translationCenter);
+		if(graph.isGraphConstrainted()) {
+			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
+			for(ConstraintStruct cons : constraintStructs) {
+				if(cons.getConstraintGraphKey() != lastGraphKey) {
+					Graph g = graphList.get(cons.getConstraintGraphKey());
+					rotateGraph(g, rotateMatrix ,translationCenter, graph.getID());
 				}
 				
 			}

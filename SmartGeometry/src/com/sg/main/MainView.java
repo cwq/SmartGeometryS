@@ -248,40 +248,52 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				URSolver.RedoStackClear(); // 清空redo栈
 				downTime = new Date().getTime();
 				Point first = new Point(touchX, touchY);
-				if(curGraph.isInGraph(first)){
-					//如果点位置在图形上,选中图元
-					for(GUnit unit : curGraph.getGraph()){
-						//点在圆内 则两点手势时放大缩小，旋转以该图形中心做为中心
-						if(unit instanceof CurveUnit) {
-							Log.v("点在圆内 ", "点在圆内 ");
-							if(((CurveUnit)unit).isInCircle(first)) {
-								Log.v("点在圆内 ", "点在圆内 ");
-								centerCurve = (CurveUnit) unit;
-							}
-						}
-						if(unit instanceof PointUnit){
-							if(((PointUnit)unit).isInLine() && !((PointUnit)unit).isCommonConstrainted())
-								continue;
-							if(unit.isInUnit(first)){
-								curUnit = unit;
-								break;
-							}
-						}
-					}
-				}else{
-					for(GUnit unit : curGraph.getGraph()) {
-						//点在圆内 则两点手势时放大缩小，旋转以该图形中心做为中心
-						if(unit instanceof CurveUnit) {
-							Log.v("点在圆内 ", "点在圆内 ");
-							if(((CurveUnit)unit).isInCircle(first)) {
-								Log.v("点在圆内 ", "点在圆内 ");
-								centerCurve = (CurveUnit) unit;
-							}
-						}
-					}
+				
+				
+				Object[] objects = graphControl.getCurGraphCurUnit(curGraph, first);
+				centerGraph = (Graph) objects[0];
+				curUnit = (GUnit) objects[1];
+				if(centerGraph != null) {
+					curGraph = centerGraph;
+				} else {
+					centerGraph = graphControl.getCenterGraph(first);
 					isEidt = false;  //如果点位置不在图形上 退出编辑态
 					curGraph = new Sketch(touchX, touchY);
 				}
+//				if(curGraph.isInGraph(first)){
+//					//如果点位置在图形上,选中图元
+//					for(GUnit unit : curGraph.getGraph()){
+//						//点在圆内 则两点手势时放大缩小，旋转以该图形中心做为中心
+//						if(unit instanceof CurveUnit) {
+//							Log.v("点在圆内 ", "点在圆内 ");
+//							if(((CurveUnit)unit).isInCircle(first)) {
+//								Log.v("点在圆内 ", "点在圆内 ");
+//								centerCurve = (CurveUnit) unit;
+//							}
+//						}
+//						if(unit instanceof PointUnit){
+//							if(((PointUnit)unit).isInLine() && !((PointUnit)unit).isCommonConstrainted())
+//								continue;
+//							if(unit.isInUnit(first)){
+//								curUnit = unit;
+//								break;
+//							}
+//						}
+//					}
+//				}else{
+//					for(GUnit unit : curGraph.getGraph()) {
+//						//点在圆内 则两点手势时放大缩小，旋转以该图形中心做为中心
+//						if(unit instanceof CurveUnit) {
+//							Log.v("点在圆内 ", "点在圆内 ");
+//							if(((CurveUnit)unit).isInCircle(first)) {
+//								Log.v("点在圆内 ", "点在圆内 ");
+//								centerCurve = (CurveUnit) unit;
+//							}
+//						}
+//					}
+//					isEidt = false;  //如果点位置不在图形上 退出编辑态
+//					curGraph = new Sketch(touchX, touchY);
+//				}
 				collector.start(); // 启动收集器
 				collector.collect(touchX, touchY);
 				Log.v("onDown", touchX + ", " + touchY);
@@ -335,7 +347,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				Log.v("translate", (touchX - pointList.get(num - 2).getX()) + ", " + (touchY - pointList.get(num - 2).getY()));
 				break;
 			case MotionEvent.ACTION_UP:
-				centerCurve = null;
+				centerGraph = null;
 				Log.v("onUp", touchX + ", " + touchY);
 				//只有拖动顶点才重新进行图形规整,拖动直线上的点重新识别约束
 				if(curUnit != null) {
@@ -420,7 +432,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				}
 				break;
 			case MotionEvent.ACTION_UP:
-				centerCurve = null;
+				centerGraph = null;
 				//处理两点手势 弹起
 				if(isDoubleTouch){
 					isRotate = true;
@@ -609,7 +621,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 	//private int a = 0, b = 1;
 
 	//cwq
-	private CurveUnit centerCurve = null;
+//	private CurveUnit centerCurve = null;
+	
+	
+	private Graph centerGraph = null;
 	private boolean isRotate = true, isScale = true;
 	/*
 	 * 双点触摸， 缩放手势，旋转手势，删除手势，还未完成，暂时不用去管
@@ -660,7 +675,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 									event2Points.get(SAMPLE_COUNT - 1),
 									event2Points.get(0));
 							isNarrowOrEnlarge = CommonFunc.NarrowOrEnlarge(event1Points.get(0), event2Points.get(0), event1Points.get(SAMPLE_COUNT - 1), event2Points.get(SAMPLE_COUNT - 1));
-							int type = VectorFunc.translation(baseVector, vector1, vector2);		
+							int type = VectorFunc.translation(baseVector, vector1, vector2);	
+							
+							Point translationCenter;
+							if(centerGraph != null) {
+								translationCenter = TranslationStratery.findTranslationCenter(centerGraph);
+							} else {
+								translationCenter = TranslationStratery.findTranslationCenter(checkedGraph);
+							}
 							if (type == 1 && isScale) {
 								isRotate = false;
 								if(isNarrowOrEnlarge){
@@ -668,16 +690,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 																		{0, (float) 0.9, 0}, 
 																		{0, 0, 1}}; //缩小矩阵
 //									checkedGraph.scale(checkedGraph, transMatrixscalenarrow, centerCurve);
-									graphControl.scaleGraph(checkedGraph, transMatrixscalenarrow, TranslationStratery.findTranslationCenter(checkedGraph), 0);
+									graphControl.scaleGraph(checkedGraph, transMatrixscalenarrow, translationCenter, 0);
 								}else{
 									float[][] transMatrixscaleenlarge = {{(float) 1.13, 0, 0}, 
 																		  {0, (float) 1.13, 0}, 
 																		  {0, 0, 1}};	//放大矩阵
 //									checkedGraph.scale(checkedGraph, transMatrixscaleenlarge, centerCurve);
-									graphControl.scaleGraph(checkedGraph, transMatrixscaleenlarge, TranslationStratery.findTranslationCenter(checkedGraph), 0);
+									graphControl.scaleGraph(checkedGraph, transMatrixscaleenlarge, translationCenter, 0);
 								}
-								if(centerCurve != null) {
-									keepConstrainter.keepCurveConstraint(checkedGraph, centerCurve);
+								if(centerGraph != null) {
+									keepConstrainter.keepCurveConstraint(checkedGraph, centerGraph);
 								}
 								//cai 2013.4.22
 								if(mSynchronousThread.isStart()) {
@@ -694,14 +716,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 															   {sinA, cosA, 0}, 
 															   {0, 0, 1}};	 //逆时针旋转矩阵
 //									checkedGraph.rotate(checkedGraph, rotateMatrix, centerCurve);
-									graphControl.rotateGraph(checkedGraph, rotateMatrix, TranslationStratery.findTranslationCenter(checkedGraph), 0);
+									graphControl.rotateGraph(checkedGraph, rotateMatrix, translationCenter, 0);
 									Log.v("translate", "alongrotate");
 								}else{
 									float[][] rotateMatrix = {{cosA, sinA, 0}, 
 															   {-sinA, cosA, 0}, 
 															   {0, 0, 1}};	//顺时针旋转矩阵
 //									checkedGraph.rotate(checkedGraph, rotateMatrix, centerCurve);
-									graphControl.rotateGraph(checkedGraph, rotateMatrix, TranslationStratery.findTranslationCenter(checkedGraph), 0);
+									graphControl.rotateGraph(checkedGraph, rotateMatrix, translationCenter, 0);
 									Log.v("translate", "wiserrotate");
 								}
 								//cai 2013.4.22
@@ -727,7 +749,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					event1Points.clear();
 					event2Points.clear();
 					collector.release();
-					centerCurve = null;
+					centerGraph = null;
 					isRotate = true;
 					isScale = true;
 //					isTouchUp = true;

@@ -224,7 +224,7 @@ public class KeepConstrainter {
 	 * 保持曲线约束
 	 * 先将与中心曲线centerCurve约束的曲线curUnit平移transMatrix保持约束，再递归将所有与curUnit约束的曲线都平移transMatrix保持约束
 	 */
-	public void keepCurveConstraint(Graph curGraph, CurveUnit centerCurve) {
+	public void keepCurveConstraint(Graph curGraph, Graph centerCurve) {
 //		List<GUnit> units = curGraph.getGraph();
 //		List<ConstraintStruct> constraintStructs = centerCurve.getConstraintStruct();
 //		CurveUnit curUnit;

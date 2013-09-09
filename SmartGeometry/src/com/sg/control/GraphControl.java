@@ -5,6 +5,7 @@
 
 package com.sg.control;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,8 +14,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
+import com.sg.object.graph.CurveGraph;
 import com.sg.object.graph.Graph;
 import com.sg.object.unit.CurveUnit;
+import com.sg.object.unit.GUnit;
+import com.sg.object.unit.PointUnit;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 import com.sg.transformation.recognizer.Recognizer;
@@ -23,6 +27,7 @@ public class GraphControl {
 	
 	private ConcurrentHashMap<Long,Graph> graphList;
 	private Collection<Graph> graphs;
+	private List<Graph> constraintGraphs;
 	
 	private Painter painter;
 	private Painter checkedPainter;
@@ -32,6 +37,7 @@ public class GraphControl {
 	
 	public GraphControl() {
 		graphList = new ConcurrentHashMap<Long,Graph>();
+		constraintGraphs = new ArrayList<Graph>();
 		recognizer = new Recognizer();
 		painter = new Painter(Color.BLACK, ThresholdProperty.DRAW_WIDTH);
 		checkedPainter = new Painter(Color.RED, ThresholdProperty.DRAW_WIDTH);
@@ -158,6 +164,68 @@ public class GraphControl {
 	
 	public void setConcurrentHashMap(ConcurrentHashMap<Long,Graph> graphList) {
 		this.graphList = graphList;
+	}
+	
+	/**
+	 * 获取所有约束图形 使用前需checkedGraphs.clear()
+	 * @param graph
+	 * @param lastGraphKey
+	 */
+	private void getConstraintGraphs(Graph graph, long lastGraphKey) {
+		constraintGraphs.add(graph);
+		if(graph.isGraphConstrainted()) {
+			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
+			for(ConstraintStruct cons : constraintStructs) {
+				if(cons.getConstraintGraphKey() != lastGraphKey) {
+					Graph g = graphList.get(cons.getConstraintGraphKey());
+					getConstraintGraphs(g, graph.getID());
+				}
+				
+			}
+		}
+	}
+	
+	public Object[] getCurGraphCurUnit(Graph graph, Point point) {
+		constraintGraphs.clear();
+		getConstraintGraphs(graph, 0);
+		Object[] objects = new Object[2];
+		objects[0] = null;
+		objects[1] = null;
+		for(Graph g : constraintGraphs) {
+			if(g.isInGraph(point)) {
+				if(objects[0] == null) {
+					objects[0] = g;
+				}
+				if(objects[1] == null) {
+					for(GUnit u : g.getGraph()) {
+						if(u instanceof PointUnit){
+							if(((PointUnit)u).isInLine() && !((PointUnit)u).isCommonConstrainted())
+								continue;
+							if(u.isInUnit(point)){
+								objects[1] = u;
+								break;
+							}
+						}
+					}
+				}
+				
+			}
+			if(objects[0] != null && objects[1] != null) {
+				return objects;
+			}
+		}
+		return objects;
+	}
+	
+	public Graph getCenterGraph(Point point) {
+		for(Graph g : constraintGraphs) {
+			if(g instanceof CurveGraph) {
+				if(((CurveUnit) g.getGraph().get(0)).isInCircle(point)) {
+					return g;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**

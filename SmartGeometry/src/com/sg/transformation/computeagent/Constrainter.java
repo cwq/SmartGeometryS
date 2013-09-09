@@ -71,16 +71,28 @@ public class Constrainter {
 			//如果约束后还是折线   第二次约束识别
 			if(constraintGraph instanceof LineGraph && !constraintGraph.isClosed()) {
 				Graph temp = constraintGraph;
+				Graph del = null;
 				Graph cons = null;
 				for(Graph graph : graphControl.getGraphList()) {
 					if(graph instanceof LineGraph && !graph.isClosed() && graph != temp) {
-						cons = lineToLineConstraint.lineToLineConstrain(graph, temp);
-						if(cons != null)
-							break;
+						if(!temp.isGraphConstrainted()) {
+							cons = lineToLineConstraint.lineToLineConstrain(graph, temp);
+							del = temp;
+							if(cons != null)
+								break;
+						} else {
+							if(!graph.isGraphConstrainted()) {
+								cons = lineToLineConstraint.lineToLineConstrain(temp, graph);
+								del = graph;
+								if(cons != null)
+									break;
+							}
+						}
+						
 					}
 				}
 				if(cons != null){
-					graphControl.deleteGraph(temp);
+					graphControl.deleteGraph(del);
 					constraintGraph = cons;
 				}
 			} 
@@ -110,7 +122,7 @@ public class Constrainter {
 //						if(constraintGraph != null)
 //							break;
 //					} else {
-						if(graph instanceof CurveGraph) { //直线和曲线
+						if(graph instanceof CurveGraph && !graphControl.isInConstraint(graph, curGraph)) { //直线和曲线
 							constraintGraph = curveConstraint.lineToCurveConstrain(graph, curGraph);
 							if(constraintGraph != null)
 								break;
@@ -123,13 +135,16 @@ public class Constrainter {
 		//对只有一个曲线元的曲线进行约束识别
 		if(curGraph instanceof CurveGraph && curGraph.getGraph().size() == 1) {
 			for(Graph graph : graphControl.getGraphList()) {
-				//圆与圆约束
-				if(graph instanceof CurveGraph && graph != curGraph){
+				//圆与圆约束  不能是三角形的内切圆
+				if(graph instanceof CurveGraph && graph != curGraph 
+						&& !((CurveGraph)curGraph).isTriangleConstraint()
+						&& !((CurveGraph)graph).isTriangleConstraint()
+						&& !graphControl.isInConstraint(graph, curGraph)){
 					constraintGraph = curveConstraint.curveToCurveConstrain(graph, curGraph);
 					if(constraintGraph != null)
 						break;
 				} else {
-					if(graph instanceof LineGraph) {
+					if(graph instanceof LineGraph && !graphControl.isInConstraint(graph, curGraph)) {
 						constraintGraph = curveConstraint.curveToLineConstrain(graph, curGraph);
 						if(constraintGraph != null) {
 //							constraintGraph.setID(graph.getID());
@@ -138,12 +153,12 @@ public class Constrainter {
 							break;
 						}
 					}
-					if(graph instanceof TriangleGraph) {
-						constraintGraph = curveConstraint.curveToTriConstrain(graph, curGraph);
+					if(graph instanceof TriangleGraph && !graphControl.isInConstraint(graph, curGraph)) {
+						constraintGraph = curveConstraint.curveToTriConstrain(graphControl, graph, curGraph);
 						if(constraintGraph != null)
 							break;
 					}
-					if(graph instanceof RectangleGraph) {
+					if(graph instanceof RectangleGraph && !graphControl.isInConstraint(graph, curGraph)) {
 						constraintGraph = curveConstraint.curveToRectConstrain(graph, curGraph);
 						if(constraintGraph != null)
 							break;
@@ -155,8 +170,8 @@ public class Constrainter {
 		//三角形和曲线
 		if(curGraph instanceof TriangleGraph) {
 			for(Graph graph : graphControl.getGraphList()) {
-				if(graph instanceof CurveGraph) {
-					constraintGraph = curveConstraint.triToCurveConstrain(graph, curGraph);
+				if(graph instanceof CurveGraph && !graphControl.isInConstraint(graph, curGraph)) {
+					constraintGraph = curveConstraint.triToCurveConstrain(graphControl, graph, curGraph);
 					if(constraintGraph != null) {
 //						constraintGraph.setID(graph.getID());
 //						graphControl.deleteGraph(graph);
@@ -170,7 +185,7 @@ public class Constrainter {
 		//四边形和曲线
 		if(curGraph instanceof RectangleGraph) {
 			for(Graph graph : graphControl.getGraphList()) {
-				if(graph instanceof CurveGraph) {
+				if(graph instanceof CurveGraph && !graphControl.isInConstraint(graph, curGraph)) {
 					constraintGraph = curveConstraint.rectToCurveConstrain(graph, curGraph);
 					if(constraintGraph != null)
 						break;

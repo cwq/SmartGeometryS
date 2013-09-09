@@ -185,6 +185,14 @@ public class GraphControl {
 		}
 	}
 	
+	/**
+	 * 获取点中选择约束图形中的哪个图形和图元
+	 * objects[0]图形
+	 * objects[1]图元
+	 * @param graph
+	 * @param point
+	 * @return
+	 */
 	public Object[] getCurGraphCurUnit(Graph graph, Point point) {
 		constraintGraphs.clear();
 		getConstraintGraphs(graph, 0);
@@ -193,9 +201,7 @@ public class GraphControl {
 		objects[1] = null;
 		for(Graph g : constraintGraphs) {
 			if(g.isInGraph(point)) {
-				if(objects[0] == null) {
-					objects[0] = g;
-				}
+				objects[0] = g;
 				if(objects[1] == null) {
 					for(GUnit u : g.getGraph()) {
 						if(u instanceof PointUnit){
@@ -203,20 +209,32 @@ public class GraphControl {
 								continue;
 							if(u.isInUnit(point)){
 								objects[1] = u;
-								break;
+								return objects;
 							}
 						}
 					}
 				}
 				
 			}
-			if(objects[0] != null && objects[1] != null) {
-				return objects;
-			}
 		}
 		return objects;
 	}
 	
+	public boolean isInConstraint(Graph graph, Graph curGraph) {
+		constraintGraphs.clear();
+		getConstraintGraphs(graph, 0);
+		for(Graph g : constraintGraphs) {
+			if(g.getID() == curGraph.getID())
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 获取点中选中约束图形的哪个圆形
+	 * @param point
+	 * @return
+	 */
 	public Graph getCenterGraph(Point point) {
 		for(Graph g : constraintGraphs) {
 			if(g instanceof CurveGraph) {

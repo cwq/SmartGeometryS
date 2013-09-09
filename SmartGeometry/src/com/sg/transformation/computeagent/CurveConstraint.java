@@ -4,12 +4,14 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.sg.control.GraphControl;
 import com.sg.logic.common.CommonFunc;
 import com.sg.logic.common.CurveType;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.constraint.ConstraintType;
 import com.sg.object.graph.Graph;
+import com.sg.object.graph.CurveGraph;
 import com.sg.object.graph.TriangleGraph;
 import com.sg.object.unit.CurveUnit;
 import com.sg.object.unit.GUnit;
@@ -300,12 +302,12 @@ public class CurveConstraint {
 	}
 	
 	//三角形与曲线图形的约束识别
-	public Graph triToCurveConstrain(Graph constraintGraph, Graph curGraph) {
+	public Graph triToCurveConstrain(GraphControl graphControl, Graph constraintGraph, Graph curGraph) {
 		//如果有约束 ，返回约束后的图形
 		//return constraintGraph;
 		//只有一个曲线元
 		if(constraintGraph.getGraph().size() == 1) {
-			curGraph = curveToTriConstrain(curGraph, constraintGraph);
+			curGraph = curveToTriConstrain(graphControl, curGraph, constraintGraph);
 			return curGraph;
 		}
 		return null;
@@ -332,7 +334,7 @@ public class CurveConstraint {
 	}
 	
 	//一个曲线与三角形的约束识别
-	public Graph curveToTriConstrain(Graph constraintGraph, Graph curGraph) {
+	public Graph curveToTriConstrain(GraphControl graphControl, Graph constraintGraph, Graph curGraph) {
 		//如果有约束 ，返回约束后的图形
 		//return constraintGraph;
 		CurveUnit curUnit = (CurveUnit) curGraph.getGraph().get(0);
@@ -398,7 +400,8 @@ public class CurveConstraint {
 				curGraph.setGraphConstrainted(true);
 				constraintGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.CircumCircleOfTriangle, curGraph.getID()));
 				curGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.CircumCircleOfTriangle, constraintGraph.getID()));
-				KeepConstrainter.getInstance().keepInternallyTangentCircleOfTriangle(constraintGraph);
+//				((CurveGraph)curGraph).setTriangleConstraint(true);
+				KeepConstrainter.getInstance().keepInternallyTangentCircleOfTriangle(graphControl, constraintGraph);
 				return constraintGraph;
 			}
 			
@@ -411,7 +414,8 @@ public class CurveConstraint {
 							pointUnit3.getPoint(), center) - radius) < ThresholdProperty.GRAPH_CHECKED_DISTANCE
 					&& Math.abs(CommonFunc.lineDistance(pointUnit3.getPoint(),
 							pointUnit1.getPoint(), center) - radius) < ThresholdProperty.GRAPH_CHECKED_DISTANCE
-					&& !((TriangleGraph) constraintGraph).getCurveConstrainted(1)) {
+					&& !((TriangleGraph) constraintGraph).getCurveConstrainted(1)
+					&& curGraph.getConstraintStruct().size() == 0) {
 				
 //				float[] messageMatrix1 = getMessageMatrix(pointUnit1, pointUnit2, center, radius);
 //				float[] messageMatrix2 = getMessageMatrix(pointUnit2, pointUnit3, center, radius);
@@ -450,7 +454,8 @@ public class CurveConstraint {
 				curGraph.setGraphConstrainted(true);
 				constraintGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.InternallyTangentCircleOfTriangle, curGraph.getID()));
 				curGraph.addConstraintStruct(new ConstraintStruct(ConstraintType.InternallyTangentCircleOfTriangle, constraintGraph.getID()));
-				KeepConstrainter.getInstance().keepInternallyTangentCircleOfTriangle(constraintGraph);
+				((CurveGraph)curGraph).setTriangleConstraint(true);
+				KeepConstrainter.getInstance().keepInternallyTangentCircleOfTriangle(graphControl, constraintGraph);
 				return constraintGraph;
 			}
 		}

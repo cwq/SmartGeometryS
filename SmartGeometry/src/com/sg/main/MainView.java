@@ -317,12 +317,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						if(((PointUnit)curUnit).isInCurve()) {
 							//拖拽在曲线上的点
 							TranslationStratery.translatePointInCurve(graphControl, curUnit, new Point(touchX, touchY));
-							keepConstrainter.keepInternallyTangentCircleOfTriangle(curGraph);
+							keepConstrainter.keepInternallyTangentCircleOfTriangle(graphControl, curGraph);
 						} else {
 							if(curGraph instanceof TriangleGraph && ((TriangleGraph)curGraph).isCurveConstrainted()) {
 								//拖动与圆外切的三角形的顶点
 								curUnit.translate(transMatrix);
-								keepConstrainter.keepInternallyTangentCircleOfTriangle(curGraph);
+								keepConstrainter.keepInternallyTangentCircleOfTriangle(graphControl, curGraph);
 							}else {
 								curGraph.setEqualAngleToF();
 								curGraph.setRightAngleToF();
@@ -365,7 +365,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				curUnit = null;
 				
 				//cai 2013.4.21
-				if(!curGraph.isGraphConstrainted()) {
+//				if(!curGraph.isGraphConstrainted()) {
 					Graph tempGraph = constrainter.constraint(graphControl, curGraph);
 					if(tempGraph != null){   //动态约束
 						//动态约束线删除原来图形 再传约束后的图形
@@ -384,7 +384,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						isEidt = false;
 						isChecked = false;
 					}
-				}
+//				}
 				
 				if(curGraph != null){
 					keepConstrainter.keepConstraint(curGraph);

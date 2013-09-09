@@ -86,7 +86,7 @@ public class LineToLineConstraint {
 		
 		if(!isALine) {
 			if(constraintPointUnit == firstPointUnit){          //如果约束点是第一个点
-				if(CommonFunc.distance(lastPointUnit, otherPointUnit) < minDist){         //有另一个约束点，则是闭合图形
+				if(CommonFunc.distance(lastPointUnit, otherPointUnit) < minDist && !constraintGraph.isGraphConstrainted()){         //有另一个约束点，则是闭合图形
 					if(otherPointUnit == onePointUnit) {
 						if(isOneStart)
 							oneLineUnit.setStartPointUnit(lastPointUnit);
@@ -115,7 +115,7 @@ public class LineToLineConstraint {
 					}
 				}
 			}else{                                             //如果约束点是最后一个点
-				if(CommonFunc.distance(firstPointUnit, otherPointUnit) < minDist){
+				if(CommonFunc.distance(firstPointUnit, otherPointUnit) < minDist && !constraintGraph.isGraphConstrainted()){
 					if(otherPointUnit == onePointUnit) {
 						if(isOneStart)
 							oneLineUnit.setStartPointUnit(firstPointUnit);

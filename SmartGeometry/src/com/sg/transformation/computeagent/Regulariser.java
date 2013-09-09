@@ -69,7 +69,7 @@ public class Regulariser {
 		Graph graph = null;
 		
 		//如果图形选中，非闭合的直线图形,判断是否可以构造闭合图形
-		if(curGraph.isChecked() && curGraph instanceof LineGraph && !curGraph.isClosed()){
+		if(curGraph.isChecked() && curGraph instanceof LineGraph && !curGraph.isClosed() && !curGraph.isGraphConstrainted()){
 
 			Graph temp = curGraph.clone();
 			List<GUnit> units = temp.getGraph();

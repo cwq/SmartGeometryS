@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.sg.control.GraphControl;
 import com.sg.control.OperationType;
 import com.sg.control.UndoRedoSolver;
 import com.sg.control.UndoRedoStruct;
@@ -46,7 +47,7 @@ public class KeepConstrainter {
 	}
 	
 	//保存三角形内切圆的约束
-	public void keepInternallyTangentCircleOfTriangle(Graph graph) {
+	public void keepInternallyTangentCircleOfTriangle(GraphControl graphControl, Graph graph) {
 		if(graph instanceof TriangleGraph && ((TriangleGraph)graph).isCurveConstrainted()) {
 			List<GUnit> units = graph.getGraph();
 			point1 = (PointUnit)units.get(0);
@@ -61,19 +62,35 @@ public class KeepConstrainter {
 			float y = (float) ((a*point1.getY() + b* point2.getY() + c*point3.getY())/(a+b+c));
 			double dis = CommonFunc.lineDistance(point1.getPoint(), point2.getPoint(), new Point(x,y));
 			//变化圆
-			for(GUnit unit : units){
-				if(unit instanceof CurveUnit && ((CurveUnit) unit).isInternallyTangentCircleOfTriangle()){
-					float x1 = ((CurveUnit) unit).getCenter().getX();
-					float y1 = ((CurveUnit) unit).getCenter().getY();
-					double r = ((CurveUnit) unit).getRadius();
+			for(ConstraintStruct constraintStruct : graph.getConstraintStruct()) {
+				if(constraintStruct.getConstraintType() == ConstraintType.InternallyTangentCircleOfTriangle) {
+					Graph curve = graphControl.getGraph(constraintStruct.getConstraintGraphKey());
+					CurveUnit unit = (CurveUnit) curve.getGraph().get(0);
+					float x1 = unit.getCenter().getX();
+					float y1 = unit.getCenter().getY();
+					double r = unit.getRadius();
 					float[][] transMatrix = {{1,0,x-x1},
 							{0,1,y-y1}, {0,0,1}};
 					unit.translate(transMatrix);
 					float[][] scaleMatrix = {{(float) (dis/r),0,0},
 							{0,(float) (dis/r),0}, {0,0,1}};
 					unit.scale(scaleMatrix, ((CurveUnit) unit).getCenter().getPoint());
+					return;
 				}
 			}
+//			for(GUnit unit : units){
+//				if(unit instanceof CurveUnit && ((CurveUnit) unit).isInternallyTangentCircleOfTriangle()){
+//					float x1 = ((CurveUnit) unit).getCenter().getX();
+//					float y1 = ((CurveUnit) unit).getCenter().getY();
+//					double r = ((CurveUnit) unit).getRadius();
+//					float[][] transMatrix = {{1,0,x-x1},
+//							{0,1,y-y1}, {0,0,1}};
+//					unit.translate(transMatrix);
+//					float[][] scaleMatrix = {{(float) (dis/r),0,0},
+//							{0,(float) (dis/r),0}, {0,0,1}};
+//					unit.scale(scaleMatrix, ((CurveUnit) unit).getCenter().getPoint());
+//				}
+//			}
 		}
 		
 	}

@@ -71,10 +71,12 @@ public class KeepConstrainter {
 					double r = unit.getRadius();
 					float[][] transMatrix = {{1,0,x-x1},
 							{0,1,y-y1}, {0,0,1}};
-					unit.translate(transMatrix);
+//					unit.translate(transMatrix);
+					graphControl.translateGraph(curve, transMatrix, graph.getID());
 					float[][] scaleMatrix = {{(float) (dis/r),0,0},
 							{0,(float) (dis/r),0}, {0,0,1}};
-					unit.scale(scaleMatrix, ((CurveUnit) unit).getCenter().getPoint());
+//					unit.scale(scaleMatrix, unit.getCenter().getPoint());
+					graphControl.scaleGraph(curve, scaleMatrix, unit.getCenter().getPoint(), graph.getID());
 					return;
 				}
 			}

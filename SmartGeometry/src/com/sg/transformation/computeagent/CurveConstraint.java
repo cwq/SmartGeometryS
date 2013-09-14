@@ -213,14 +213,14 @@ public class CurveConstraint {
 						if (p1 == null) {
 							curDistance1 = CommonFunc.distance(pt,
 									pointUnit1.getPoint());
-							if (curDistance1 < ThresholdProperty.LINE_DISTANCE) {
+							if (curDistance1 < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 								p1 = pt;
 							}
 						}
 						if (p2 == null) {
 							curDistance1 = CommonFunc.distance(pt,
 									pointUnit2.getPoint());
-							if (curDistance1 < ThresholdProperty.LINE_DISTANCE) {
+							if (curDistance1 < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 								p2 = pt;
 							}
 						}
@@ -245,19 +245,17 @@ public class CurveConstraint {
 						if (p1 == null && p2!= null) {
 							curDistance2 = CommonFunc.distance(center,
 									pointUnit1.getPoint());
-							if (curDistance2 < ThresholdProperty.LINE_DISTANCE) {
+							if (curDistance2 < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 								p1 = center;
 							}
-							Log.v("p1 == null", "p1 == null");
 						}
 						if (p2 == null && p1 != null) {
 
 							curDistance2 = CommonFunc.distance(center,
 									pointUnit2.getPoint());
-							if (curDistance2 < ThresholdProperty.LINE_DISTANCE) {
+							if (curDistance2 < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 								p2 = center;
 							}
-							Log.v("p2 == null", "p2 == null");
 						}
 //					}
 
@@ -356,19 +354,19 @@ public class CurveConstraint {
 			for(Point pt : pList) {
 				if(p1 == null) {
 					curDistance = CommonFunc.distance(pt, pointUnit1.getPoint());
-					if(curDistance < ThresholdProperty.LINE_DISTANCE) {
+					if(curDistance < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 						p1 = pt;
 					}
 				}
 				if(p2 == null) {
 					curDistance = CommonFunc.distance(pt, pointUnit2.getPoint());
-					if(curDistance < ThresholdProperty.LINE_DISTANCE) {
+					if(curDistance < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 						p2 = pt;
 					}
 				}
 				if(p3 == null) {
 					curDistance = CommonFunc.distance(pt, pointUnit3.getPoint());
-					if(curDistance < ThresholdProperty.LINE_DISTANCE) {
+					if(curDistance < ThresholdProperty.POINT_SELECTED_DISTANCE) {
 						p3 = pt;
 					}
 				}

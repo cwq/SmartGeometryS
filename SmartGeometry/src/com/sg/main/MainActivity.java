@@ -55,6 +55,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     // Intent request codes
     private static final int FILE_EXPLORER_REQUEST = 10;
 	private static final int CONNECT_DEVICE_REQUEST = 11;
+	private static final int OPEN_BLUETOOTH_REQUEST = 12;
+	private boolean isOpenBlutTooth;
 	
 	// Name of the connected device
     private String mConnectedDeviceName = null;
@@ -68,8 +70,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 	private RadioButton clear;
 	private RadioButton save;
 	private RadioButton open;
+	private RadioButton pen;
 	private RadioButton bluetooth;
-	private RadioButton exit;
+	
 	private HorizontalScrollView mHorizontalScrollView;//上面的水平滚动控件
 	
     @Override
@@ -122,15 +125,15 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     	clear = (RadioButton)findViewById(R.id.clear);
     	save = (RadioButton)findViewById(R.id.save);
     	open = (RadioButton)findViewById(R.id.open);
+    	pen = (RadioButton)findViewById(R.id.pen);
     	bluetooth = (RadioButton)findViewById(R.id.bluetooth);
-    	exit = (RadioButton)findViewById(R.id.exit);
     	undo.setLayoutParams(params);
     	redo.setLayoutParams(params);
     	clear.setLayoutParams(params);
     	save.setLayoutParams(params);
     	open.setLayoutParams(params);
     	bluetooth.setLayoutParams(params);
-    	exit.setLayoutParams(params);
+    	pen.setLayoutParams(params);
  		mHorizontalScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
         mRadioGroup.setOnCheckedChangeListener(this);
     }
@@ -150,6 +153,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     			connectDevice(data);
     		}
     		break;
+    	case OPEN_BLUETOOTH_REQUEST:
+    		if(resultCode == RESULT_OK) {
+    			isOpenBlutTooth = true;
+    		} else {
+    			isOpenBlutTooth = false;
+    		}
     	default:
 			break;
     	}
@@ -159,7 +168,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
      * */
     private void initConfig() {
     	DisplayMetrics dm = getResources().getDisplayMetrics();
-    	ThresholdProperty.set((float)dm.densityDpi / DisplayMetrics.DENSITY_MEDIUM, (float)dm.widthPixels / 480);
+    	ThresholdProperty.set((float)dm.densityDpi / DisplayMetrics.DENSITY_MEDIUM, dm.widthPixels);
     }
     
     //返回键对话框
@@ -248,13 +257,16 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             Toast.makeText(this, "蓝牙不可用", Toast.LENGTH_SHORT).show();
         } else {
         	if (!mBluetoothAdapter.isEnabled()) {
-//        		Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//        	    startActivityForResult(enableBtIntent, 1);
-            	mBluetoothAdapter.enable();
+        		Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        	    startActivityForResult(enableBtIntent, 1);
+//            	mBluetoothAdapter.enable();
         	}
 //        	if (!mBluetoothAdapter.isEnabled()) {
 //        		return;
 //        	}
+        	if(!isOpenBlutTooth) {
+        		return;
+        	}
         	while(!mBluetoothAdapter.isEnabled()) {
 
         	}
@@ -376,13 +388,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 			Intent intent = new Intent(this,FileExplorerActivity.class); 
     		startActivityForResult(intent, FILE_EXPLORER_REQUEST);
 			break;
+		case R.id.pen:
+			pen.setChecked(false);
+			break;
 		case R.id.bluetooth:
 			chooseDevice();
 			bluetooth.setChecked(false);
-			break;
-		case R.id.exit:
-			exit();
-			exit.setChecked(false);
 			break;
 		default:
 			break;

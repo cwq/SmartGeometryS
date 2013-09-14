@@ -43,7 +43,7 @@ public class ThresholdProperty {
 	//RadioButton layout_width
 	public static int BUTTON_WIDTH;
 	
-	public static void set(float density, float wDensity) {
+	public static void set(float density, int width) {
 		POINT_COUNT = 20;
 		POINT_DISTANCE = 8 * density;
 		POINT_SELECTED_DISTANCE = 20 * density;
@@ -56,9 +56,10 @@ public class ThresholdProperty {
 		DRAW_WIDTH = 3 * density;
 		MAGNIFIER_RADUIS = 80 * density;
 		LINE_DISTANCE = 15 * density;
-		TRI_WIDTH = (int) (200 * wDensity);
-		REC_WIDTH = (int) (350 * wDensity);
+		TRI_WIDTH = (int) (200 * density);
+		REC_WIDTH = (int) (350 * density);
 		POP_HEIGTH = (int) (70 * density);
-		BUTTON_WIDTH = (int) (96 * wDensity);
+//		BUTTON_WIDTH = (int) (96 * wDensity);
+		BUTTON_WIDTH = width / 7;
 	}
 }

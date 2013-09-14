@@ -62,14 +62,14 @@
 				<RadioButton
 					style="@style/radioButton"
 					
-					android:drawableTop="@drawable/bluetooth"
-					android:id="@+id/bluetooth"
+					android:drawableTop="@drawable/pen"
+					android:id="@+id/pen"
 				/>
 				<RadioButton
 					style="@style/radioButton"
 					
-					android:drawableTop="@drawable/exit"
-					android:id="@+id/exit"
+					android:drawableTop="@drawable/bluetooth"
+					android:id="@+id/bluetooth"
 				/>
 			</RadioGroup>
 	</HorizontalScrollView>

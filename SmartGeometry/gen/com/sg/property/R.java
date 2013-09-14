@@ -72,14 +72,13 @@ public final class R {
     }
     public static final class id {
         public static final int angle_bisector=0x7f070020;
-        public static final int bluetooth=0x7f070011;
+        public static final int bluetooth=0x7f070012;
         public static final int button_set=0x7f070004;
         public static final int clear=0x7f07000e;
         public static final int command_line=0x7f070021;
         public static final int diamond=0x7f070016;
         public static final int editName=0x7f070023;
         public static final int equilateral_tri=0x7f07001d;
-        public static final int exit=0x7f070012;
         public static final int file_name=0x7f070008;
         public static final int horizontalScrollView=0x7f07000a;
         public static final int icon=0x7f070007;
@@ -93,6 +92,7 @@ public final class R {
         public static final int paired_devices=0x7f070001;
         public static final int parallelogram=0x7f070013;
         public static final int path=0x7f070005;
+        public static final int pen=0x7f070011;
         public static final int radioGroup=0x7f07000b;
         public static final int rect=0x7f070014;
         public static final int redo=0x7f07000d;

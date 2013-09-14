@@ -213,51 +213,53 @@ public class CurveConstraint {
 						if (p1 == null) {
 							curDistance1 = CommonFunc.distance(pt,
 									pointUnit1.getPoint());
-							if (curDistance1 < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+							if (curDistance1 < ThresholdProperty.LINE_DISTANCE) {
 								p1 = pt;
 							}
 						}
 						if (p2 == null) {
 							curDistance1 = CommonFunc.distance(pt,
 									pointUnit2.getPoint());
-							if (curDistance1 < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+							if (curDistance1 < ThresholdProperty.LINE_DISTANCE) {
 								p2 = pt;
 							}
 						}
 					}
-					if (p1 != null
-							&& p2 != null
-							&& CommonFunc.lineDistance(pointUnit1.getPoint(),
-									pointUnit2.getPoint(), center) < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
-						float[][] transMatrix = {
-								{
-										1,
-										0,
-										center.getX()- p1.getX() },
-								{
-										0,
-										1,
-										center.getY()- p1.getY() }, { 0, 0, 1 } };
-						PointUnit centerPoint = new PointUnit(center);
-						centerPoint.translate(transMatrix);
-						p2 = centerPoint.getPoint();
-					} else {
+//					if (p1 != null
+//							&& p2 != null
+//							&& CommonFunc.lineDistance(pointUnit1.getPoint(),
+//									pointUnit2.getPoint(), center) < radius) {
+//						float[][] transMatrix = {
+//								{
+//										1,
+//										0,
+//										center.getX()- p1.getX() },
+//								{
+//										0,
+//										1,
+//										center.getY()- p1.getY() }, { 0, 0, 1 } };
+//						PointUnit centerPoint = new PointUnit(center);
+//						centerPoint.translate(transMatrix);
+//						p2 = centerPoint.getPoint();
+//					} else {
 						if (p1 == null && p2!= null) {
 							curDistance2 = CommonFunc.distance(center,
 									pointUnit1.getPoint());
-							if (curDistance2 < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+							if (curDistance2 < ThresholdProperty.LINE_DISTANCE) {
 								p1 = center;
 							}
+							Log.v("p1 == null", "p1 == null");
 						}
 						if (p2 == null && p1 != null) {
 
 							curDistance2 = CommonFunc.distance(center,
-									pointUnit1.getPoint());
-							if (curDistance2 < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+									pointUnit2.getPoint());
+							if (curDistance2 < ThresholdProperty.LINE_DISTANCE) {
 								p2 = center;
 							}
+							Log.v("p2 == null", "p2 == null");
 						}
-					}
+//					}
 
 					if (p1 != null && p2 != null) {
 						pointUnit1.setX(p1.getX());
@@ -354,19 +356,19 @@ public class CurveConstraint {
 			for(Point pt : pList) {
 				if(p1 == null) {
 					curDistance = CommonFunc.distance(pt, pointUnit1.getPoint());
-					if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+					if(curDistance < ThresholdProperty.LINE_DISTANCE) {
 						p1 = pt;
 					}
 				}
 				if(p2 == null) {
 					curDistance = CommonFunc.distance(pt, pointUnit2.getPoint());
-					if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+					if(curDistance < ThresholdProperty.LINE_DISTANCE) {
 						p2 = pt;
 					}
 				}
 				if(p3 == null) {
 					curDistance = CommonFunc.distance(pt, pointUnit3.getPoint());
-					if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+					if(curDistance < ThresholdProperty.LINE_DISTANCE) {
 						p3 = pt;
 					}
 				}

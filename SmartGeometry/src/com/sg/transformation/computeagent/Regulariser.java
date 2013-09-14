@@ -131,7 +131,7 @@ public class Regulariser {
 			//cai 2013.9.1
 			if(graph.isClosed() && isPolygon(graph)){
 				regularPolygonHolotactic(graph);  //多边形规整
-			}else if(!graph.isClosed()){
+			}else if(!graph.isClosed() && !graph.isGraphConstrainted()){
 				if(graph.getGraph().size() > 3){
 					brokenLineHolotactic(graph);  //折线规整
 				}

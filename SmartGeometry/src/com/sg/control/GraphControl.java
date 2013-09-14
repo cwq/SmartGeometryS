@@ -87,6 +87,8 @@ public class GraphControl {
 	}
 	
 	public void checkedGraph(Graph graph, long lastGraphKey, boolean state) {
+		if(graph == null)
+			return;
 		graph.setChecked(state);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
@@ -128,6 +130,8 @@ public class GraphControl {
 	 * @param lastGraphKey
 	 */
 	public void deleteConstraintedGraph(Graph graph, long lastGraphKey) {
+		if(graph == null)
+			return;
 		deleteGraph(graph);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
@@ -172,6 +176,8 @@ public class GraphControl {
 	 * @param lastGraphKey
 	 */
 	private void getConstraintGraphs(Graph graph, long lastGraphKey) {
+		if(graph == null)
+			return;
 		constraintGraphs.add(graph);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
@@ -253,6 +259,8 @@ public class GraphControl {
 	 * @param lastGraphKey
 	 */
 	public void translateGraph(Graph graph, float[][] transMatrix, long lastGraphKey) {
+		if(graph == null)
+			return;
 		graph.translate(transMatrix);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
@@ -274,6 +282,8 @@ public class GraphControl {
 	 * @param lastGraphKey
 	 */
 	public void scaleGraph(Graph graph, float[][] scaleMatrix, Point translationCenter, long lastGraphKey) {
+		if(graph == null)
+			return;
 		graph.scale(scaleMatrix, translationCenter);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
@@ -295,6 +305,8 @@ public class GraphControl {
 	 * @param lastGraphKey
 	 */
 	public void rotateGraph(Graph graph, float[][] rotateMatrix, Point translationCenter, long lastGraphKey) {
+		if(graph == null)
+			return;
 		graph.rotate(rotateMatrix, translationCenter);
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();

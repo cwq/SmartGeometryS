@@ -16,6 +16,7 @@ import com.sg.logic.common.VectorFunc;
 import com.sg.logic.strategy.TranslationStratery;
 import com.sg.object.Point;
 import com.sg.object.graph.LineGraph;
+import com.sg.object.graph.PointGraph;
 import com.sg.object.graph.Sketch;
 import com.sg.object.graph.Graph;
 import com.sg.object.graph.TriangleGraph;
@@ -69,9 +70,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 	
 	private UndoRedoSolver URSolver;
 	
-	//GraphControl graphControl;
-	private int color; // 画笔颜色 宽度
-	private int width;
+//	//GraphControl graphControl;
+//	private int color; // 画笔颜色 宽度
+//	private int width;
 	
     //private boolean isFirstUndoDelete; //是否是第一次undo 撤销删除
     
@@ -88,6 +89,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
     
     //cai bluetooth
     private SynchronousThread mSynchronousThread;
+    
+    //cai 2013.9.14
+    private boolean isRecognize;  //是否识别图形
 	
 	public MainView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -99,6 +103,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		isChecked = false;
 		
 		isDoubleTouch = false;
+		
+		isRecognize = true;
 
 		curUnit = null;
 		pointList = new ArrayList<Point>();
@@ -120,8 +126,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		
 		userIntentionReasoning = new UserIntentionReasoning(context, regulariser, constrainter, keepConstrainter, URSolver);
 		
-		color = Color.BLACK; // 画笔颜色
-		width = 3; // 画笔宽度
+//		color = Color.BLACK; // 画笔颜色
+//		width = 3; // 画笔宽度
 		//graphControl = new GraphControl(graphList, color, width);
 
 		//isFirstUndoDelete = true;
@@ -525,6 +531,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				
 				//图形识别
 				Graph graph = graphControl.createGraph(penInfo.getNewPenInfo()); // 传入预处理后的点信息给图形工厂去识别，然后返回识别后的对象
+				
+				//cai 2013.9.14  是否识别图形
+				if(!isRecognize) {
+					graph = null;
+				}
+				
 				if (graph != null) {
 					curGraph = graph.clone();
 				}
@@ -574,6 +586,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					}
 				}
 				
+				//不要识别点
+				if(curGraph instanceof PointGraph) {
+					URSolver.RedoStackClear(); //清空redo
+					curGraph = null;
+					checkedGraph = null;
+					collector.release(); // 释放收集器
+					break;
+				}
 				
 				//cai 2013.4.21
 				Graph tempGraph = curGraph = regulariser.regularise(graphControl, curGraph);  //图形规整
@@ -766,6 +786,15 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			mSynchronousThread.sendMessage("AXZ");
 			mSynchronousThread.sendMessage(graphControl.getGraphList());
 		}
+	}
+	
+
+	public boolean isRecognize() {
+		return isRecognize;
+	}
+
+	public void setRecognize(boolean isRecognize) {
+		this.isRecognize = isRecognize;
 	}
 	
 	//功能

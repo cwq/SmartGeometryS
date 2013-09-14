@@ -389,6 +389,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     		startActivityForResult(intent, FILE_EXPLORER_REQUEST);
 			break;
 		case R.id.pen:
+			if(mainView.isRecognize()) {
+				Toast.makeText(this, "图形识别已关闭", Toast.LENGTH_SHORT).show();
+				mainView.setRecognize(false);
+			} else {
+				Toast.makeText(this, "图形识别已打开", Toast.LENGTH_SHORT).show();
+				mainView.setRecognize(true);
+			}
 			pen.setChecked(false);
 			break;
 		case R.id.bluetooth:

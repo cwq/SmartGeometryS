@@ -14,10 +14,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
+import com.sg.object.constraint.ConstraintType;
 import com.sg.object.graph.CurveGraph;
 import com.sg.object.graph.Graph;
 import com.sg.object.unit.CurveUnit;
 import com.sg.object.unit.GUnit;
+import com.sg.object.unit.LineUnit;
 import com.sg.object.unit.PointUnit;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
@@ -267,7 +269,25 @@ public class GraphControl {
 			for(ConstraintStruct cons : constraintStructs) {
 				if(cons.getConstraintGraphKey() != lastGraphKey) {
 					Graph g = graphList.get(cons.getConstraintGraphKey());
-					translateGraph(g, transMatrix, graph.getID());
+					if(graph instanceof CurveGraph && (cons.getConstraintType() == ConstraintType.HypotenuseOfCircle || cons.getConstraintType() == ConstraintType.TangentOfCircle)) {
+						PointUnit tangPoint;
+						for(GUnit unit : g.getGraph()) {
+							if(unit instanceof PointUnit) {
+								if(((PointUnit) unit).isInLine() || ((PointUnit) unit).isInCurve()) {
+									unit.translate(transMatrix);
+								}
+							} else {
+								if(unit instanceof LineUnit){
+									tangPoint = ((LineUnit) unit).getTangentPoint();
+									if(tangPoint != null) {
+										tangPoint.translate(transMatrix);
+									}
+								}
+							}
+						}
+					} else {
+						translateGraph(g, transMatrix, graph.getID());
+					}
 				}
 				
 			}
@@ -290,7 +310,25 @@ public class GraphControl {
 			for(ConstraintStruct cons : constraintStructs) {
 				if(cons.getConstraintGraphKey() != lastGraphKey) {
 					Graph g = graphList.get(cons.getConstraintGraphKey());
-					scaleGraph(g, scaleMatrix ,translationCenter, graph.getID());
+					if(graph instanceof CurveGraph && (cons.getConstraintType() == ConstraintType.HypotenuseOfCircle || cons.getConstraintType() == ConstraintType.TangentOfCircle)) {
+						PointUnit tangPoint;
+						for(GUnit unit : g.getGraph()) {
+							if(unit instanceof PointUnit) {
+								if(((PointUnit) unit).isInLine() || ((PointUnit) unit).isInCurve()) {
+									unit.scale(scaleMatrix, translationCenter);
+								}
+							} else {
+								if(unit instanceof LineUnit){
+									tangPoint = ((LineUnit) unit).getTangentPoint();
+									if(tangPoint != null) {
+										tangPoint.scale(scaleMatrix, translationCenter);
+									}
+								}
+							}
+						}
+					} else {
+						scaleGraph(g, scaleMatrix ,translationCenter, graph.getID());
+					}
 				}
 				
 			}
@@ -313,7 +351,25 @@ public class GraphControl {
 			for(ConstraintStruct cons : constraintStructs) {
 				if(cons.getConstraintGraphKey() != lastGraphKey) {
 					Graph g = graphList.get(cons.getConstraintGraphKey());
-					rotateGraph(g, rotateMatrix ,translationCenter, graph.getID());
+					if(graph instanceof CurveGraph && (cons.getConstraintType() == ConstraintType.HypotenuseOfCircle || cons.getConstraintType() == ConstraintType.TangentOfCircle)) {
+						PointUnit tangPoint;
+						for(GUnit unit : g.getGraph()) {
+							if(unit instanceof PointUnit) {
+								if(((PointUnit) unit).isInLine() || ((PointUnit) unit).isInCurve()) {
+									unit.rotate(rotateMatrix, translationCenter);
+								}
+							} else {
+								if(unit instanceof LineUnit){
+									tangPoint = ((LineUnit) unit).getTangentPoint();
+									if(tangPoint != null) {
+										tangPoint.rotate(rotateMatrix, translationCenter);
+									}
+								}
+							}
+						}
+					} else {
+						rotateGraph(g, rotateMatrix ,translationCenter, graph.getID());
+					}
 				}
 				
 			}

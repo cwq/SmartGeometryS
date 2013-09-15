@@ -261,10 +261,14 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				curUnit = (GUnit) objects[1];
 				if(centerGraph != null) {
 					curGraph = centerGraph;
+					checkedGraph = curGraph;
 				} else {
 					centerGraph = graphControl.getCenterGraph(first);
 					isEidt = false;  //如果点位置不在图形上 退出编辑态
 					curGraph = new Sketch(touchX, touchY);
+				}
+				if(centerGraph != null) {
+					checkedGraph = centerGraph;
 				}
 //				if(curGraph.isInGraph(first)){
 //					//如果点位置在图形上,选中图元

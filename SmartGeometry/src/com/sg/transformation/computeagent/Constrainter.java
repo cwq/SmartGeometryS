@@ -48,18 +48,30 @@ public class Constrainter {
 	
 	public Graph constraint(GraphControl graphControl, Graph curGraph) { 
 		Graph constraintGraph = null;
+		Graph del = null;
 		//不闭合直线 先与 不闭合直线约束识别
 		if(curGraph instanceof LineGraph && !curGraph.isClosed()) {
 			boolean isALine = (curGraph.getGraph().size() == 3);
 			for(Graph graph : graphControl.getGraphList()) {
 				if(graph instanceof LineGraph && !graph.isClosed() && graph != curGraph) {
-					constraintGraph = lineToLineConstraint.lineToLineConstrain(graph, curGraph);
-					if(constraintGraph != null)
-						break;
+					if(!curGraph.isGraphConstrainted()) {
+						constraintGraph = lineToLineConstraint.lineToLineConstrain(graph, curGraph);
+						del = curGraph;
+						if(constraintGraph != null)
+							break;
+					} else {
+						if(!graph.isGraphConstrainted()) {
+							constraintGraph = lineToLineConstraint.lineToLineConstrain(curGraph, graph);
+							del = graph;
+							if(constraintGraph != null)
+								break;
+						}
+					}
 				}
 				//单条直线和三角形
 				if(isALine && graph instanceof TriangleGraph || graph instanceof RectangleGraph){  //如果是三角形或四边形（只写了直线与三角形）
 					constraintGraph = linearCloseConstraint.linearConstraint(graph, curGraph);
+					del = curGraph;
 					if(constraintGraph != null)
 						break;
 				}
@@ -67,11 +79,11 @@ public class Constrainter {
 		}
 
 		if(constraintGraph != null){   //如果有约束
-			graphControl.deleteGraph(curGraph);
+			graphControl.deleteGraph(del);
 			//如果约束后还是折线   第二次约束识别
 			if(constraintGraph instanceof LineGraph && !constraintGraph.isClosed()) {
 				Graph temp = constraintGraph;
-				Graph del = null;
+				del = null;
 				Graph cons = null;
 				for(Graph graph : graphControl.getGraphList()) {
 					if(graph instanceof LineGraph && !graph.isClosed() && graph != temp) {

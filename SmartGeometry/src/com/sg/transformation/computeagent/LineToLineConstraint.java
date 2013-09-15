@@ -28,6 +28,10 @@ public class LineToLineConstraint {
 		PointUnit firstPointUnit = (PointUnit) constraintGraph.getGraph().get(0);    //约束图形的第一个点元
 		PointUnit lastPointUnit = (PointUnit) constraintGraph.getGraph().get(consNum - 1);  //约束图形的最后一个点元
 		
+		//判断点是否是圆心
+		boolean isFirstCenter = (firstPointUnit.isInLine() && !firstPointUnit.isCommonConstrainted());
+		boolean isLastCenter = (lastPointUnit.isInLine() && !lastPointUnit.isCommonConstrainted());
+		
 		int curNum = curGraph.getGraph().size();
 		PointUnit onePointUnit = (PointUnit) curGraph.getGraph().get(0);    //当前图形的第一个点元
 		LineUnit oneLineUnit = (LineUnit) curGraph.getGraph().get(1);
@@ -38,7 +42,7 @@ public class LineToLineConstraint {
 		
 		PointUnit otherPointUnit;  //被约束图形（直线）的另一个点元
 
-		if(CommonFunc.distance(firstPointUnit, onePointUnit) < minDist) {
+		if(CommonFunc.distance(firstPointUnit, onePointUnit) < minDist && !isFirstCenter) {
 			constraintPointUnit = firstPointUnit;
 			onePointUnit = firstPointUnit;
 			if(isOneStart)
@@ -47,7 +51,7 @@ public class LineToLineConstraint {
 				oneLineUnit.setEndPointUnit(firstPointUnit);
 			otherPointUnit = twoPointUnit;
 		} else {
-			if(CommonFunc.distance(firstPointUnit, twoPointUnit) < minDist) {
+			if(CommonFunc.distance(firstPointUnit, twoPointUnit) < minDist && !isFirstCenter) {
 				constraintPointUnit = firstPointUnit;
 				twoPointUnit = firstPointUnit;
 				if(isTwoStart)
@@ -56,7 +60,7 @@ public class LineToLineConstraint {
 					twoLineUnit.setEndPointUnit(firstPointUnit);
 				otherPointUnit = onePointUnit;
 			} else {
-				if(CommonFunc.distance(lastPointUnit, onePointUnit) < minDist) {
+				if(CommonFunc.distance(lastPointUnit, onePointUnit) < minDist && !isLastCenter) {
 					constraintPointUnit = lastPointUnit;
 					onePointUnit = lastPointUnit;
 					if(isOneStart)
@@ -65,7 +69,7 @@ public class LineToLineConstraint {
 						oneLineUnit.setEndPointUnit(lastPointUnit);
 					otherPointUnit = twoPointUnit;
 				} else {
-					if(CommonFunc.distance(lastPointUnit, twoPointUnit) < minDist) {
+					if(CommonFunc.distance(lastPointUnit, twoPointUnit) < minDist && !isLastCenter) {
 						constraintPointUnit = lastPointUnit;
 						twoPointUnit = lastPointUnit;
 						if(isTwoStart)

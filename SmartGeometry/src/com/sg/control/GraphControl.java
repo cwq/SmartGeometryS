@@ -220,6 +220,22 @@ public class GraphControl {
 								return objects;
 							}
 						}
+						if(u instanceof CurveUnit) {
+							PointUnit startPointUnit = ((CurveUnit) u).getStartPoint();
+							PointUnit endPointUnit = ((CurveUnit) u).getEndPoint();
+							if(startPointUnit != null) {
+								if(startPointUnit.isInUnit(point)) {
+									objects[1] = startPointUnit;
+									return objects;
+								}
+							}
+							if(endPointUnit != null) {
+								if(endPointUnit.isInUnit(point)) {
+									objects[1] = endPointUnit;
+									return objects;
+								}
+							}
+						}
 					}
 				}
 				

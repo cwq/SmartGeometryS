@@ -10,7 +10,9 @@ import com.sg.object.Point;
 import com.sg.property.common.ThresholdProperty;
 import com.sg.property.tools.Painter;
 
+import android.R.integer;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.Log;
 
 public class CurveUnit extends GUnit implements Serializable {
@@ -35,6 +37,12 @@ public class CurveUnit extends GUnit implements Serializable {
 	private boolean isOverHalf;   //椭圆曲线是否超过一半
 	private double alpha;  //旋转角
 	private double Cos, Sin;  //cos(alpha), sin(alpha)
+	
+	//cai 2013.9.21
+	private int startIndex = 0;
+	private int endIndex = 128;
+	private PointUnit startPoint;
+	private PointUnit endPoint;
 	
 //	//cai
 //	private List<ConstraintStruct> constraintStructs;
@@ -333,8 +341,13 @@ public class CurveUnit extends GUnit implements Serializable {
 ////			Log.v("Curve", (float)(-sfact[0]-sfact[2]) + ", " + (float)(-sfact[1]-sfact[2]) + ", " + 
 ////							(float)(-sfact[0]+sfact[2]) + ", " + (float)(-sfact[1]+sfact[2]) );			
 //			break;
-//		case Ellipse:			
-//			break;	
+		case Ellipse:
+			startPoint.draw(canvas, painter);
+			endPoint.draw(canvas, painter);
+			for(int i=startIndex; i<endIndex; i++) {
+				canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
+			}
+			break;	
 //		case Hyperbola:
 //			break;
 //		case Parabola:
@@ -342,7 +355,8 @@ public class CurveUnit extends GUnit implements Serializable {
 //		case Other:		
 //			break;
 		default:
-			for(int i=0; i<pList.size()-1; i++) {
+//			Painter specialPainter = new Painter(Color.BLUE, ThresholdProperty.DRAW_WIDTH-1);
+			for(int i=0; i<pList.size() - 1; i++) {
 				canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
 			}
 			break;
@@ -411,15 +425,30 @@ public class CurveUnit extends GUnit implements Serializable {
 				}
 		//		Log.v("Curve", (sAgl / Math.PI) + " -> " + (eAgl / Math.PI));
 				
-				for(double tAgl = sAgl; tAgl < eAgl; tAgl += stepAgl) {
-					double tx = ta * Math.cos(tAgl);
-					double ty = tb * Math.sin(tAgl);
-					double x = tx*Cos - ty*Sin + center.getX();
-					double y = tx*Sin + ty*Cos + center.getY();
+				//起始 终止点
+				startIndex = 0;
+				endIndex = (int) ((eAgl - sAgl)/ stepAgl);
+				
+				double tx;
+				double ty;
+				double x;
+				double y;
+				
+				
+				for(double tAgl = sAgl; tAgl < sAgl + 2 * Math.PI; tAgl += stepAgl) {
+					tx = ta * Math.cos(tAgl);
+					ty = tb * Math.sin(tAgl);
+					x = tx*Cos - ty*Sin + center.getX();
+					y = tx*Sin + ty*Cos + center.getY();
 		//			double x = +tx*Math.cos(2*Math.PI - alpha) + ty*Math.sin(2*Math.PI - alpha) + center.getX();
 		//			double y = -tx*Math.sin(2*Math.PI - alpha) + ty*Math.cos(2*Math.PI - alpha) + center.getY();
 					res.add(new Point((float)x, (float)y));
 				}
+				
+				startPoint = new PointUnit(res.get(startIndex));
+				endPoint = new PointUnit(res.get(endIndex));
+				startPoint.setInCurve(true);
+				endPoint.setInCurve(true);
 				break;
 			default:
 				res = pList;
@@ -446,6 +475,37 @@ public class CurveUnit extends GUnit implements Serializable {
 		return res;
 	}
 	
+	// 返回在曲线上与参考点 transPoint 的 x 或 y 坐标相同的最近点
+	public Point getCurvePoint(GUnit unit, Point transPoint) {
+		int minIndex = 0;
+		double minDis = CommonFunc.distance(pList.get(0), transPoint);
+		double curDis;
+		for(int i = 1; i < pList.size(); i++) {
+			curDis = CommonFunc.distance(pList.get(i), transPoint);
+			if(curDis < minDis) {
+				minDis = curDis;
+				minIndex = i;
+			}
+		}
+		if(unit == startPoint) {
+			if(minIndex < endIndex) {
+				startIndex = minIndex;
+				return pList.get(minIndex);
+			} else {
+				return null;
+			}
+		}
+		if(unit == endPoint) {
+			if(minIndex > startIndex) {
+				endIndex = minIndex;
+				return pList.get(minIndex);
+			} else {
+				return null;
+			}
+		}
+		return pList.get(minIndex);
+	}
+	
 //	public List<Point> findCurvePoint(List<Point> pList) {
 //		List<Point> res = new ArrayList<Point>();
 //		Point temp, pre = pList.get(0);
@@ -466,27 +526,27 @@ public class CurveUnit extends GUnit implements Serializable {
 //		return res;
 //	}
 	
-	// 返回在曲线上与参考点 transPoint 的 x 或 y 坐标相同的最近点
-	public Point getEndPoint(Point transPoint) {
-//		if(calPointX(transPoint) != null)
-//			return calPointX(transPoint);
-//		return calPointY(transPoint);
-		float scale = (float) (radius / CommonFunc.distance(center.getPoint(), transPoint));
-		float x1 = center.getX();
-		float y1 = center.getY();
-		float x = (transPoint.getX() - x1) * scale + x1;
-		float y = (transPoint.getY() - y1) * scale + y1;
-		return new Point(x, y);
-	}
+//	// 返回在曲线上与参考点 transPoint 的 x 或 y 坐标相同的最近点
+//	public Point getEndPoint(Point transPoint) {
+////		if(calPointX(transPoint) != null)
+////			return calPointX(transPoint);
+////		return calPointY(transPoint);
+//		float scale = (float) (radius / CommonFunc.distance(center.getPoint(), transPoint));
+//		float x1 = center.getX();
+//		float y1 = center.getY();
+//		float x = (transPoint.getX() - x1) * scale + x1;
+//		float y = (transPoint.getY() - y1) * scale + y1;
+//		return new Point(x, y);
+//	}
 	
-	// 找到在曲线上与参考点 transPoint 的 x 或 y 坐标相同的最近点，并更新 PointUnit 坐标
-	public void getEndPoint(PointUnit transPoint) {
-		Point t = calPointX(new Point(transPoint.getX(), transPoint.getY()));
-		if(t == null)
-			t = calPointY(new Point(transPoint.getX(), transPoint.getY()));
-		transPoint.setX(t.getX());
-		transPoint.setY(t.getY());
-	}
+//	// 找到在曲线上与参考点 transPoint 的 x 或 y 坐标相同的最近点，并更新 PointUnit 坐标
+//	public void getEndPoint(PointUnit transPoint) {
+//		Point t = calPointX(new Point(transPoint.getX(), transPoint.getY()));
+//		if(t == null)
+//			t = calPointY(new Point(transPoint.getX(), transPoint.getY()));
+//		transPoint.setX(t.getX());
+//		transPoint.setY(t.getY());
+//	}
 	
 	// 根据 x 点返回曲线上 y 坐标相同的最近点，超出定义域则返回 null
 	private Point calPointX(Point x) {
@@ -621,9 +681,12 @@ public class CurveUnit extends GUnit implements Serializable {
 		}
 		((CurveUnit)temp).fact = fact.clone();
 		((CurveUnit)temp).sfact = sfact.clone();
-		if(curveType == CurveType.Circle || curveType == CurveType.Ellipse)
+		if(curveType == CurveType.Circle || curveType == CurveType.Ellipse) {
 			((CurveUnit)temp).center = (PointUnit) center.clone();
-		
+			((CurveUnit)temp).startPoint = (PointUnit) startPoint.clone();
+			((CurveUnit)temp).endPoint = (PointUnit) endPoint.clone();
+		}
+			
 //		((CurveUnit)temp).constraintStructs = new ArrayList<ConstraintStruct>();
 //		for(ConstraintStruct conStrut : constraintStructs) {
 //			((CurveUnit)temp).constraintStructs.add(conStrut.clone());
@@ -642,8 +705,8 @@ public class CurveUnit extends GUnit implements Serializable {
 //				return true;
 //			}
 //		} else {
-			for(Point pt : pList) {
-				curDistance = CommonFunc.distance(pt, point);
+			for(int i = startIndex; i < endIndex; i++) {
+				curDistance = CommonFunc.distance(pList.get(i), point);
 				if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
 					return true;
 				}
@@ -705,6 +768,12 @@ public class CurveUnit extends GUnit implements Serializable {
 		if(center != null) {
 			center.translate(transMatrix);
 		}
+		if(startPoint != null) {
+			startPoint.translate(transMatrix);
+		}
+		if(endPoint != null) {
+			endPoint.translate(transMatrix);
+		}
 		for(Point point : pList) {
 			point.setX(point.getX() + transMatrix[0][2]);
 			point.setY(point.getY() + transMatrix[1][2]);
@@ -717,6 +786,12 @@ public class CurveUnit extends GUnit implements Serializable {
 		float x0 = translationCenter.getX(), y0 = translationCenter.getY();
 		if(center != null) {
 			center.scale(scaleMatrix, translationCenter);
+		}
+		if(startPoint != null) {
+			startPoint.scale(scaleMatrix, translationCenter);
+		}
+		if(endPoint != null) {
+			endPoint.scale(scaleMatrix, translationCenter);
 		}
 		if(curveType == CurveType.Circle) {
 			radius *= scaleMatrix[0][0];
@@ -734,6 +809,12 @@ public class CurveUnit extends GUnit implements Serializable {
 		float x0 = translationCenter.getX(), y0 = translationCenter.getY();
 		if(center != null) {
 			center.rotate(rotateMatrix, translationCenter);
+		}
+		if(startPoint != null) {
+			startPoint.rotate(rotateMatrix, translationCenter);
+		}
+		if(endPoint != null) {
+			endPoint.rotate(rotateMatrix, translationCenter);
 		}
 		float tempX, tempY;
 		for(Point point : pList) {
@@ -759,6 +840,14 @@ public class CurveUnit extends GUnit implements Serializable {
 	public void setInternallyTangentCircleOfTriangle(
 			boolean isInternallyTangentCircleOfTriangle) {
 		this.isInternallyTangentCircleOfTriangle = isInternallyTangentCircleOfTriangle;
+	}
+
+	public PointUnit getStartPoint() {
+		return startPoint;
+	}
+
+	public PointUnit getEndPoint() {
+		return endPoint;
 	}
 
 }

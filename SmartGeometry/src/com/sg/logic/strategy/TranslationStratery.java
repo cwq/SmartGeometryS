@@ -152,7 +152,7 @@ public class TranslationStratery {
 //				curve = (CurveUnit) u;
 //		}
 		CurveUnit curve = (CurveUnit) graphControl.getGraph(((PointUnit)unit).getKeyOfLineOrCurve()).getGraph().get(0);
-		Point point = curve.getEndPoint(transPoint);
+		Point point = curve.getCurvePoint(unit, transPoint);
 		if(point != null) {
 			((PointUnit)unit).setX(point.getX());
 			((PointUnit)unit).setY(point.getY());
@@ -172,13 +172,11 @@ public class TranslationStratery {
 						y += center.getY();
 						n++;
 					} else {
-						List<Point> pList = ((CurveUnit)unit).getPList();
-						int size = pList.size();
 						n += 2;
-						x += pList.get(0).getX();
-						x += pList.get(size - 1).getX();
-						y += pList.get(0).getY();
-						y += pList.get(size - 1).getY();
+						x += ((CurveUnit)unit).getStartPoint().getX();
+						x += ((CurveUnit)unit).getEndPoint().getX();
+						y += ((CurveUnit)unit).getStartPoint().getY();
+						y += ((CurveUnit)unit).getEndPoint().getY();
 					}
 				}
 			}

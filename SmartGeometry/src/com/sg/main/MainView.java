@@ -270,40 +270,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				if(centerGraph != null) {
 					checkedGraph = centerGraph;
 				}
-//				if(curGraph.isInGraph(first)){
-//					//如果点位置在图形上,选中图元
-//					for(GUnit unit : curGraph.getGraph()){
-//						//点在圆内 则两点手势时放大缩小，旋转以该图形中心做为中心
-//						if(unit instanceof CurveUnit) {
-//							Log.v("点在圆内 ", "点在圆内 ");
-//							if(((CurveUnit)unit).isInCircle(first)) {
-//								Log.v("点在圆内 ", "点在圆内 ");
-//								centerCurve = (CurveUnit) unit;
-//							}
-//						}
-//						if(unit instanceof PointUnit){
-//							if(((PointUnit)unit).isInLine() && !((PointUnit)unit).isCommonConstrainted())
-//								continue;
-//							if(unit.isInUnit(first)){
-//								curUnit = unit;
-//								break;
-//							}
-//						}
-//					}
-//				}else{
-//					for(GUnit unit : curGraph.getGraph()) {
-//						//点在圆内 则两点手势时放大缩小，旋转以该图形中心做为中心
-//						if(unit instanceof CurveUnit) {
-//							Log.v("点在圆内 ", "点在圆内 ");
-//							if(((CurveUnit)unit).isInCircle(first)) {
-//								Log.v("点在圆内 ", "点在圆内 ");
-//								centerCurve = (CurveUnit) unit;
-//							}
-//						}
-//					}
-//					isEidt = false;  //如果点位置不在图形上 退出编辑态
-//					curGraph = new Sketch(touchX, touchY);
-//				}
+
 				collector.start(); // 启动收集器
 				collector.collect(touchX, touchY);
 				Log.v("onDown", touchX + ", " + touchY);
@@ -657,22 +624,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		isDoubleTouch = true;
 		if(isChecked){
 			isEidt = false;
-			//isDoubleTouch = true;
-			/*
-			//规整输入，以靠近坐标原点的为first点，反之则为second点
-			if(isTouchUp){
-				int action = event.getAction();
-				int firstX = (int) event.getX(0);
-				int firstY = (int) event.getY(0);
-				int secondX = (int) event.getX(1);
-				int secondY = (int) event.getY(1);
-				isTouchUp = false;
-				if( (CommonFunc.distance(new Point(firstX,firstY), new Point()) ) > CommonFunc.distance(new Point(secondX,secondY), new Point()) ){
-					a = 1;
-					b = 0;
-				}
-			}
-			*/
+
 			int action = event.getAction();
 			int firstX = (int) event.getX(0);
 			int firstY = (int) event.getY(0);
@@ -835,24 +787,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		case CREATE:
 			for(Graph graph : graphControl.getGraphList()){
 				if(tempGraph.getID() == graph.getID()){
-						/*
-						tempGraph = URSolver.getFrontGraph(graph);
-						if(tempGraph != null){
-							Log.v("恢复改变之前图形", "恢复改变之前图形");
-							tempGraph = tempGraph.clone();
-							graphList.add(tempGraph); //添加约束,选中前的图形
-							if(tempGraph.isChecked()){  //如果添加的图形是选中的图形
-								isEidt = true;
-								//isChecked = true;
-								curGraph = tempGraph;
-							}else{
-								isEidt = false;  //如果添加的图形不是选中的图形
-								//isChecked = false;
-								curGraph = null;
-							}
-						}
-						
-						*/
+
 					graphControl.deleteGraph(graph);
 					//Log.v("undo", graphList.size() + "");
 					//cai 2013.4.22
@@ -906,12 +841,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			//删除图形后撤销
 			//if(tempGraph != null){
 				Log.v("删除图形后撤销", "删除图形后撤销");
-				/*
-				if(isFirstUndoDelete){   //仅当第一次undo 恢复删除图形时  undo栈添加刚出栈的图形
-					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, tempGraph)); //添加被删除的图形，undo栈添加刚出栈的图形
-					isFirstUndoDelete = false;
-				}
-				*/
+
 				tempGraph = tempGraph.clone();
 				//graphList.add(tempGraph); //添加被删除的图形
 				graphControl.addGraph(tempGraph);
@@ -991,14 +921,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		case NONE:
 			break;
 		case CREATE:
-			/*
-			for(Graph graph : graphList){
-				if(tempGraph.getID() == graph.getID()){
-					graphList.remove(graph);
-					break;
-				}
-			}
-			*/
+
 			tempGraph = tempGraph.clone();
 			if(tempGraph.isChecked()){  //如果要恢复的图形是选中的图形
 				isEidt = true;

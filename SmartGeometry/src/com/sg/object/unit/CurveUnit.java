@@ -39,10 +39,11 @@ public class CurveUnit extends GUnit implements Serializable {
 	private double Cos, Sin;  //cos(alpha), sin(alpha)
 	
 	//cai 2013.9.21
-	private int startIndex = 0;
-	private int endIndex = 128;
+	private int startIndex;
+	private int endIndex;
 	private PointUnit startPoint;
 	private PointUnit endPoint;
+	private final int pointNum = 64;
 	
 //	//cai
 //	private List<ConstraintStruct> constraintStructs;
@@ -344,8 +345,17 @@ public class CurveUnit extends GUnit implements Serializable {
 		case Ellipse:
 			startPoint.draw(canvas, painter);
 			endPoint.draw(canvas, painter);
+//			break;	
+//		case Hyperbola:
+//			break;
+//		case Parabola:
+//			break;	
+//		case Other:		
+//			break;
+		default:
+//			Painter specialPainter = new Painter(Color.BLUE, ThresholdProperty.DRAW_WIDTH-1);
 			if(startIndex <= endIndex) {
-				for(int i=startIndex; i<endIndex; i++) {
+				for(int i = startIndex; i < endIndex; i++) {
 					canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
 				}
 			} else {
@@ -355,19 +365,6 @@ public class CurveUnit extends GUnit implements Serializable {
 				for(int i = 0; i < endIndex; i++) {
 					canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
 				}
-			}
-			
-			break;	
-//		case Hyperbola:
-//			break;
-//		case Parabola:
-//			break;	
-//		case Other:		
-//			break;
-		default:
-//			Painter specialPainter = new Painter(Color.BLUE, ThresholdProperty.DRAW_WIDTH-1);
-			for(int i=0; i<pList.size() - 1; i++) {
-				canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
 			}
 			break;
 		}
@@ -382,7 +379,7 @@ public class CurveUnit extends GUnit implements Serializable {
 		switch(curveType) {
 			case Circle:
 			case Ellipse:
-				double stepAgl = Math.PI / 64;	
+				double stepAgl = Math.PI / pointNum;	
 				double ta = Math.sqrt(-sf / sa);
 				double tb = Math.sqrt(-sf / sc);
 				double sAgl = 0, eAgl = 2 * Math.PI;
@@ -457,10 +454,10 @@ public class CurveUnit extends GUnit implements Serializable {
 				
 				startPoint = new PointUnit(res.get(startIndex));
 				endPoint = new PointUnit(res.get(endIndex));
-				startPoint.setInCurve(true);
-				endPoint.setInCurve(true);
 				break;
 			default:
+				startIndex = 0;
+				endIndex = pList.size() - 1;
 				res = pList;
 				break;
 		}
@@ -500,6 +497,8 @@ public class CurveUnit extends GUnit implements Serializable {
 		if(unit == startPoint) {
 //			if(minIndex < endIndex) {
 				startIndex = minIndex;
+				if(startIndex > endIndex || ((endIndex - startIndex) > pointNum))
+					isOverHalf = true;
 				return pList.get(minIndex);
 //			} else {
 //				return null;
@@ -508,6 +507,8 @@ public class CurveUnit extends GUnit implements Serializable {
 		if(unit == endPoint) {
 //			if(minIndex > startIndex) {
 				endIndex = minIndex;
+				if(startIndex > endIndex || ((endIndex - startIndex) > pointNum))
+					isOverHalf = true;
 				return pList.get(minIndex);
 //			} else {
 //				return null;

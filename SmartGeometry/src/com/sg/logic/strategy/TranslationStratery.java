@@ -166,17 +166,18 @@ public class TranslationStratery {
 		if(graph instanceof CurveGraph) {
 			for(GUnit unit : graph.getGraph()) {
 				if(unit instanceof CurveUnit) {
-					if(((CurveUnit)unit).getCurveType() == CurveType.Circle || (((CurveUnit)unit).getCurveType() == CurveType.Ellipse && ((CurveUnit)unit).isOverHalf())) {
+					if(((CurveUnit)unit).getCurveType() == CurveType.Circle || ((CurveUnit)unit).getCurveType() == CurveType.Ellipse) {
 						PointUnit center = ((CurveUnit)unit).getCenter();
 						x += center.getX();
 						y += center.getY();
 						n++;
 					} else {
+						List<Point> pList= ((CurveUnit)unit).getPList();
 						n += 2;
-						x += ((CurveUnit)unit).getStartPoint().getX();
-						x += ((CurveUnit)unit).getEndPoint().getX();
-						y += ((CurveUnit)unit).getStartPoint().getY();
-						y += ((CurveUnit)unit).getEndPoint().getY();
+						x += pList.get(0).getX();
+						x += pList.get(pList.size() - 1).getX();
+						y += pList.get(0).getY();
+						y += pList.get(pList.size() - 1).getY();
 					}
 				}
 			}

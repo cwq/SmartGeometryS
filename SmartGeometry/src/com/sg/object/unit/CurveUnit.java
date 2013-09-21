@@ -344,9 +344,19 @@ public class CurveUnit extends GUnit implements Serializable {
 		case Ellipse:
 			startPoint.draw(canvas, painter);
 			endPoint.draw(canvas, painter);
-			for(int i=startIndex; i<endIndex; i++) {
-				canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
+			if(startIndex <= endIndex) {
+				for(int i=startIndex; i<endIndex; i++) {
+					canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
+				}
+			} else {
+				for(int i = startIndex; i < pList.size() - 1; i++) {
+					canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
+				}
+				for(int i = 0; i < endIndex; i++) {
+					canvas.drawLine(pList.get(i).getX(), pList.get(i).getY(), pList.get(i+1).getX(), pList.get(i+1).getY(), painter.getPaint());
+				}
 			}
+			
 			break;	
 //		case Hyperbola:
 //			break;
@@ -476,7 +486,7 @@ public class CurveUnit extends GUnit implements Serializable {
 	}
 	
 	// 返回在曲线上与参考点 transPoint 的 x 或 y 坐标相同的最近点
-	public Point getCurvePoint(GUnit unit, Point transPoint) {
+	public Point getCurvePoint(PointUnit unit, Point transPoint) {
 		int minIndex = 0;
 		double minDis = CommonFunc.distance(pList.get(0), transPoint);
 		double curDis;
@@ -488,20 +498,20 @@ public class CurveUnit extends GUnit implements Serializable {
 			}
 		}
 		if(unit == startPoint) {
-			if(minIndex < endIndex) {
+//			if(minIndex < endIndex) {
 				startIndex = minIndex;
 				return pList.get(minIndex);
-			} else {
-				return null;
-			}
+//			} else {
+//				return null;
+//			}
 		}
 		if(unit == endPoint) {
-			if(minIndex > startIndex) {
+//			if(minIndex > startIndex) {
 				endIndex = minIndex;
 				return pList.get(minIndex);
-			} else {
-				return null;
-			}
+//			} else {
+//				return null;
+//			}
 		}
 		return pList.get(minIndex);
 	}
@@ -698,20 +708,27 @@ public class CurveUnit extends GUnit implements Serializable {
 	public boolean isInUnit(Point point) {
 		// TODO Auto-generated method stub
 		double curDistance;
-		//暂时
-//		if(curveType == CurveType.Circle) {
-//			curDistance = CommonFunc.distance(point, center.getPoint());
-//			if(Math.abs(curDistance - radius) < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
-//				return true;
-//			}
-//		} else {
+		if(startIndex < endIndex) {
 			for(int i = startIndex; i < endIndex; i++) {
 				curDistance = CommonFunc.distance(pList.get(i), point);
 				if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
 					return true;
 				}
 			}
-//		}
+		} else {
+			for(int i = startIndex; i < pList.size(); i++) {
+				curDistance = CommonFunc.distance(pList.get(i), point);
+				if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+					return true;
+				}
+			}
+			for(int i = 0; i < endIndex; i++) {
+				curDistance = CommonFunc.distance(pList.get(i), point);
+				if(curDistance < ThresholdProperty.GRAPH_CHECKED_DISTANCE) {
+					return true;
+				}
+			}
+		}
 		
 		return false;
 	}

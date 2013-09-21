@@ -65,10 +65,15 @@ public class Recognizer {
 			graph.buildGraph(unit);
 			PointUnit start = ((CurveUnit)unit).getStartPoint();
 			PointUnit end = ((CurveUnit)unit).getEndPoint();
-			start.setInCurve(true);
-			start.setKeyOfLineOrCurve(graph.getID());
-			end.setInCurve(true);
-			end.setKeyOfLineOrCurve(graph.getID());
+			if(start != null) {
+				start.setInCurve(true);
+				start.setKeyOfLineOrCurve(graph.getID());
+			}
+			if(end != null) {
+				end.setInCurve(true);
+				end.setKeyOfLineOrCurve(graph.getID());
+			}
+			
 			return graph;
 		}
 		

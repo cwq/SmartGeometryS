@@ -152,7 +152,7 @@ public class TranslationStratery {
 //				curve = (CurveUnit) u;
 //		}
 		CurveUnit curve = (CurveUnit) graphControl.getGraph(((PointUnit)unit).getKeyOfLineOrCurve()).getGraph().get(0);
-		Point point = curve.getCurvePoint(unit, transPoint);
+		Point point = curve.getCurvePoint((PointUnit) unit, transPoint);
 		if(point != null) {
 			((PointUnit)unit).setX(point.getX());
 			((PointUnit)unit).setY(point.getY());

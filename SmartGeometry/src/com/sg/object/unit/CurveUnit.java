@@ -867,5 +867,13 @@ public class CurveUnit extends GUnit implements Serializable {
 	public PointUnit getEndPoint() {
 		return endPoint;
 	}
+	
+	public int getStartIndex() {
+		return startIndex;
+	}
+	
+	public int getEndIndex() {
+		return endIndex;
+	}
 
 }

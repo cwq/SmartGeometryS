@@ -141,6 +141,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 	protected void initSynchronousThread(SynchronousThread synchronousThread) {
 		mSynchronousThread = synchronousThread;
 		userIntentionReasoning.initSynchronousThread(mSynchronousThread);
+		graphControl.initSynchronousThread(synchronousThread);
 	}
 	
 	
@@ -281,6 +282,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				//平移
 				float[][] transMatrix = {{1, 0, touchX - pointList.get(num - 2).getX()}, {0, 1, touchY - pointList.get(num - 2).getY()}, {0, 0, 1}};
 				if(curUnit != null){
+					
 					//拖拽在直线上的点
 					if(((PointUnit)curUnit).isInLine()) {
 //						//拖动切线的端点
@@ -308,17 +310,22 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						}
 						
 					}
+					
+					keepConstrainter.keepConstraint(curGraph);
+					if(mSynchronousThread.isStart()) {
+						mSynchronousThread.writeGraph(curGraph);
+					}
 					Log.v("拖拽点", "拖拽点");
 				}else{
 //					curGraph.translate(curGraph, transMatrix);
 					graphControl.translateGraph(curGraph, transMatrix, 0);
 				}
-				keepConstrainter.keepConstraint(curGraph);	
+					
 				
-				//cai 2013.4.21 蓝牙传输
-				if(mSynchronousThread.isStart()) {
-					mSynchronousThread.writeGraph(curGraph);
-				}
+//				//cai 2013.4.21 蓝牙传输
+//				if(mSynchronousThread.isStart()) {
+//					mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(curGraph));
+//				}
 				
 				Log.v("onMove", touchX + ", " + touchY);
 				Log.v("translate", (touchX - pointList.get(num - 2).getX()) + ", " + (touchY - pointList.get(num - 2).getY()));
@@ -347,8 +354,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					if(tempGraph != null){   //动态约束
 						//动态约束线删除原来图形 再传约束后的图形
 						if(mSynchronousThread.isStart()) {
-							mSynchronousThread.writeDeleteGraph(curGraph);
-							mSynchronousThread.writeGraph(tempGraph);
+//							mSynchronousThread.writeDeleteGraph(curGraph);
+							mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 						}
 						
 						if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
@@ -429,8 +436,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 							if(tempGraph != null){   //动态约束
 								//动态约束线删除原来图形 再传约束后的图形
 								if(mSynchronousThread.isStart()) {
-									mSynchronousThread.writeDeleteGraph(curGraph);
-									mSynchronousThread.writeGraph(tempGraph);
+//									mSynchronousThread.writeDeleteGraph(curGraph);
+									mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 								}
 								
 								if(tempGraph instanceof TriangleGraph && tempGraph.isGraphConstrainted() && curGraph instanceof LineGraph) {
@@ -445,18 +452,18 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 								isChecked = false;
 							}
 						}
-						if(curGraph != null){
-							//keepConstrainter.keepConstraint(curGraph);
-							if(mSynchronousThread.isStart()) {
-								mSynchronousThread.writeGraph(curGraph);
-							}
-						}
+//						if(curGraph != null){
+//							//keepConstrainter.keepConstraint(curGraph);
+//							if(mSynchronousThread.isStart()) {
+//								mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(curGraph));
+//							}
+//						}
 					}
 					//URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
-					}
+//					if(mSynchronousThread.isStart()) {
+//						//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
+//					}
 					break;
 				}
 				Log.v("onUp", touchX + ", " + touchY);
@@ -473,16 +480,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //							checkedGraph.setChecked(false);
 							graphControl.checkedGraph(checkedGraph, 0, false);
 							
-							//cai 2013.4.24
-							if(mSynchronousThread.isStart()) {
-								mSynchronousThread.writeDisselectGraph(checkedGraph);
-							}
+//							//cai 2013.4.24
+//							if(mSynchronousThread.isStart()) {
+//								mSynchronousThread.writeDisselectGraph(graphControl.getConstraintGraphs(checkedGraph));
+//							}
 							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 						}
-						//cai 2013.4.24
-						if(mSynchronousThread.isStart()) {
-							mSynchronousThread.writeSelectGraph(graph);
-						}
+//						//cai 2013.4.24
+//						if(mSynchronousThread.isStart()) {
+//							mSynchronousThread.writeSelectGraph(graphControl.getConstraintGraphs(graph));
+//						}
 						isEidt = true; // 进入编辑态
 						isChecked = true;
 						curGraph = graph;
@@ -519,10 +526,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //					checkedGraph.setChecked(false);
 					graphControl.checkedGraph(checkedGraph, 0, false);
 					
-					//cai 2013.4.24
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeDisselectGraph(checkedGraph);
-					}
+//					//cai 2013.4.24
+//					if(mSynchronousThread.isStart()) {
+//						mSynchronousThread.writeDisselectGraph(graphControl.getConstraintGraphs(checkedGraph));
+//					}
 					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 					//如果在选中图形外点一点 则识别为撤销选中
 					if(penInfo.isFixedPoint()){
@@ -539,13 +546,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					//如果是删除手势
 					if(Recognizer.isDeleteGesture(pointList)){
 						Log.v("删除图形", "删除图形");
+						
+//						//cai 2013.4.21
+//						if(mSynchronousThread.isStart()) {
+//							//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
+//							mSynchronousThread.writeDeleteGraph(graphControl.getConstraintGraphs(checkedGraph));
+//						}
+						
 //						graphControl.deleteGraph(checkedGraph);
 						graphControl.deleteConstraintedGraph(checkedGraph, 0);
-						//cai 2013.4.21
-						if(mSynchronousThread.isStart()) {
-							//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
-							mSynchronousThread.writeDeleteGraph(checkedGraph);
-						}
+						
 						URSolver.EnUndoStack(new UndoRedoStruct(OperationType.DELETE, checkedGraph.clone())); //改变图形，undo栈添加
 						URSolver.RedoStackClear(); //清空redo
 						curGraph = null;
@@ -587,7 +597,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				//cai 2013.4.21
 				if(mSynchronousThread.isStart()) {
 					//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
-					mSynchronousThread.writeGraph(tempGraph);
+					mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 				}
 				URSolver.RedoStackClear(); //清空redo
 				curGraph = null;
@@ -677,10 +687,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 								if(centerGraph != null) {
 									keepConstrainter.keepCurveConstraint(checkedGraph, centerGraph);
 								}
-								//cai 2013.4.22
-								if(mSynchronousThread.isStart()) {
-									mSynchronousThread.writeGraph(checkedGraph);
-								}
+//								//cai 2013.4.22
+//								if(mSynchronousThread.isStart()) {
+//									mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(checkedGraph));
+//								}
 								Log.v("translate", "scale");
 							} else if (type == 2 && isRotate) {
 								isScale = false;
@@ -702,10 +712,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 									graphControl.rotateGraph(checkedGraph, rotateMatrix, translationCenter, 0);
 									Log.v("translate", "wiserrotate");
 								}
-								//cai 2013.4.22
-								if(mSynchronousThread.isStart()) {
-									mSynchronousThread.writeGraph(checkedGraph);
-								}
+//								//cai 2013.4.22
+//								if(mSynchronousThread.isStart()) {
+//									mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(checkedGraph));
+//								}
 							} else {
 								Log.v("translate", "null");
 							}
@@ -829,7 +839,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
 						if (tempGraph != null) {
-							mSynchronousThread.writeGraph(tempGraph);
+							mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 						}
 					}
 					//Log.v("undo", graphList.size() + "");
@@ -847,7 +857,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 				graphControl.addGraph(tempGraph);
 				//cai 2013.4.22
 				if(mSynchronousThread.isStart()) {
-					mSynchronousThread.writeGraph(tempGraph);
+					mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 				}
 				if(tempGraph.isChecked()){  //如果添加的图形是选中的图形
 					isEidt = true;
@@ -882,7 +892,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					if(mSynchronousThread.isStart()) {
 						mSynchronousThread.writeDeleteGraph(graph);
 						if (tempGraph != null) {
-							mSynchronousThread.writeGraph(tempGraph);
+							mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 						}
 					}
 					tempGraph = URSolver.peekUndoStack().getGraph().clone();  //添加动态约束前选择的图形
@@ -894,7 +904,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					graphControl.addGraph(tempGraph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeGraph(tempGraph);
+						mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 					}
 					//Log.v("undo", graphList.size() + "");
 					return;
@@ -938,7 +948,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			graphControl.addGraph(tempGraph);
 			//cai 2013.4.22
 			if(mSynchronousThread.isStart()) {
-				mSynchronousThread.writeGraph(tempGraph);
+				mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 			}
 			//Log.v("redo", graphList.size() + "");
 			break;
@@ -969,7 +979,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					//Log.v("redo", graphList.size() + "");
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeGraph(tempGraph);
+						mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 					}
 					return;
 				}
@@ -1014,7 +1024,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					graphControl.addGraph(tempGraph);
 					//cai 2013.4.22
 					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeGraph(tempGraph);
+						mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 					}
 					//Log.v("redo", graphList.size() + "");
 					return;

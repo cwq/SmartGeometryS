@@ -114,7 +114,7 @@ public class Constrainter {
 			keepConstrainter.keepConstraint(temp);
 			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系
 //				temp.setChecked(false);
-				graphControl.checkedGraph(temp, 0, false);
+//				graphControl.checkedGraph(temp, 0, false);
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
 			}else{
 				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));

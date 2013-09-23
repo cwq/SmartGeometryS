@@ -56,7 +56,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     private static final int FILE_EXPLORER_REQUEST = 10;
 	private static final int CONNECT_DEVICE_REQUEST = 11;
 	private static final int OPEN_BLUETOOTH_REQUEST = 12;
-	private boolean isOpenBlutTooth;
 	
 	// Name of the connected device
     private String mConnectedDeviceName = null;
@@ -155,9 +154,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     		break;
     	case OPEN_BLUETOOTH_REQUEST:
     		if(resultCode == RESULT_OK) {
-    			isOpenBlutTooth = true;
+    			chooseDevice();
     		} else {
-    			isOpenBlutTooth = false;
+    			
     		}
     	default:
 			break;
@@ -257,19 +256,16 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             Toast.makeText(this, "蓝牙不可用", Toast.LENGTH_SHORT).show();
         } else {
         	if (!mBluetoothAdapter.isEnabled()) {
+        		Log.v("isOpenBlutTooth = 0;", "isOpenBlutTooth = 0;");
         		Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        	    startActivityForResult(enableBtIntent, 1);
+        	    startActivityForResult(enableBtIntent, OPEN_BLUETOOTH_REQUEST);
+        	    return;
 //            	mBluetoothAdapter.enable();
         	}
 //        	if (!mBluetoothAdapter.isEnabled()) {
 //        		return;
 //        	}
-        	if(!isOpenBlutTooth) {
-        		return;
-        	}
-        	while(!mBluetoothAdapter.isEnabled()) {
 
-        	}
         	if(mBluetoothService == null || mBluetoothService.getState() == BluetoothService.STATE_NONE
         			|| mBluetoothService.getState() == BluetoothService.STATE_LISTEN) {
         		Intent intent = new Intent(this,DeviceListActivity.class); 

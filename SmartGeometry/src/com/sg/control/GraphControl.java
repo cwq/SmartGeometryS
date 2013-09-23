@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+
+import com.sg.bluetooth.SynchronousThread;
 import com.sg.object.Point;
 import com.sg.object.constraint.ConstraintStruct;
 import com.sg.object.constraint.ConstraintType;
@@ -36,6 +38,8 @@ public class GraphControl {
 	
 	private Recognizer recognizer;
 	
+	private SynchronousThread mSynchronousThread;
+	
 	
 	public GraphControl() {
 		graphList = new ConcurrentHashMap<Long,Graph>();
@@ -43,6 +47,10 @@ public class GraphControl {
 		recognizer = new Recognizer();
 		painter = new Painter(Color.BLACK, ThresholdProperty.DRAW_WIDTH);
 		checkedPainter = new Painter(Color.RED, ThresholdProperty.DRAW_WIDTH);
+	}
+	
+	public void initSynchronousThread(SynchronousThread mSynchronousThread) {
+		this.mSynchronousThread = mSynchronousThread;
 	}
 	
 	/*
@@ -92,6 +100,9 @@ public class GraphControl {
 		if(graph == null)
 			return;
 		graph.setChecked(state);
+		if(mSynchronousThread.isStart()) {
+			mSynchronousThread.writeCheckGraph(graph, state);
+		}
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
 			for(ConstraintStruct cons : constraintStructs) {
@@ -122,8 +133,12 @@ public class GraphControl {
 	 * @param graph
 	 */
 	public void deleteGraph(Graph graph) {
-		if(graph != null)
+		if(graph != null) {
+			if(mSynchronousThread.isStart()) {
+				mSynchronousThread.writeDeleteGraph(graph);
+			}
 			graphList.remove(graph.getID());
+		}
 	}
 	
 	/**
@@ -191,6 +206,17 @@ public class GraphControl {
 				
 			}
 		}
+	}
+	
+	/**
+	 * 返回所有约束图形
+	 * @param graph
+	 * @return
+	 */
+	public List<Graph> getConstraintGraphs(Graph graph) {
+		constraintGraphs.clear();
+		getConstraintGraphs(graph, 0);
+		return constraintGraphs;
 	}
 	
 	/**
@@ -280,6 +306,9 @@ public class GraphControl {
 		if(graph == null)
 			return;
 		graph.translate(transMatrix);
+		if(mSynchronousThread.isStart()) {
+			mSynchronousThread.writeGraph(graph);
+		}
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
 			for(ConstraintStruct cons : constraintStructs) {
@@ -301,6 +330,9 @@ public class GraphControl {
 								}
 							}
 						}
+						if(mSynchronousThread.isStart()) {
+							mSynchronousThread.writeGraph(g);
+						}
 					} else {
 						translateGraph(g, transMatrix, graph.getID());
 					}
@@ -321,6 +353,9 @@ public class GraphControl {
 		if(graph == null)
 			return;
 		graph.scale(scaleMatrix, translationCenter);
+		if(mSynchronousThread.isStart()) {
+			mSynchronousThread.writeGraph(graph);
+		}
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
 			for(ConstraintStruct cons : constraintStructs) {
@@ -342,6 +377,9 @@ public class GraphControl {
 								}
 							}
 						}
+						if(mSynchronousThread.isStart()) {
+							mSynchronousThread.writeGraph(g);
+						}
 					} else {
 						scaleGraph(g, scaleMatrix ,translationCenter, graph.getID());
 					}
@@ -362,6 +400,9 @@ public class GraphControl {
 		if(graph == null)
 			return;
 		graph.rotate(rotateMatrix, translationCenter);
+		if(mSynchronousThread.isStart()) {
+			mSynchronousThread.writeGraph(graph);
+		}
 		if(graph.isGraphConstrainted()) {
 			List<ConstraintStruct> constraintStructs = graph.getConstraintStruct();
 			for(ConstraintStruct cons : constraintStructs) {
@@ -382,6 +423,9 @@ public class GraphControl {
 									}
 								}
 							}
+						}
+						if(mSynchronousThread.isStart()) {
+							mSynchronousThread.writeGraph(g);
 						}
 					} else {
 						rotateGraph(g, rotateMatrix ,translationCenter, graph.getID());

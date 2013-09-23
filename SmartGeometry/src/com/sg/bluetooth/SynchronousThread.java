@@ -80,7 +80,7 @@ public class SynchronousThread implements Runnable {
 		this.graphList = graphList;
 	}
 	
-	public synchronized void writeGraphList() {
+	private synchronized void writeGraphList() {
 		//StringBuilder s = new StringBuilder();
 		try {
 			for(Graph graph : graphList) {
@@ -132,17 +132,14 @@ public class SynchronousThread implements Runnable {
 		messages.offer(s.toString());
 	}
 	
-	public synchronized void writeSelectGraph(Graph graph) {
+	public synchronized void writeCheckGraph(Graph graph, boolean state) {
 		StringBuilder s = new StringBuilder();
-		s.append("AY");
-		s.append(writeGraphID(graph));
-		s.append("Z");
-		messages.offer(s.toString());
-	}
-	
-	public synchronized void writeDisselectGraph(Graph graph) {
-		StringBuilder s = new StringBuilder();
-		s.append("AN");
+		s.append("A");
+		if(state) {
+			s.append("Y");
+		} else {
+			s.append("N");
+		}
 		s.append(writeGraphID(graph));
 		s.append("Z");
 		messages.offer(s.toString());
@@ -233,8 +230,8 @@ public class SynchronousThread implements Runnable {
 				s.append(state);
 				s.append(unit.getID() + ",");
 				List<Point> pList = ((CurveUnit) unit).getPList();
-				for (Point point : pList) {
-					s.append(point.getX() + "," + point.getY() + ",");
+				for (int i = ((CurveUnit) unit).getStartIndex(); i <= ((CurveUnit) unit).getEndIndex(); i++) {
+					s.append(pList.get(i).getX() + "," + pList.get(i).getY() + ",");
 				}
 				int size = s.length();
 				s.setCharAt(size-1, 'E');

@@ -61,6 +61,9 @@ public class KeepConstrainter {
 			float x = (float) ((a*point1.getX() + b* point2.getX() + c*point3.getX())/(a+b+c));
 			float y = (float) ((a*point1.getY() + b* point2.getY() + c*point3.getY())/(a+b+c));
 			double dis = CommonFunc.lineDistance(point1.getPoint(), point2.getPoint(), new Point(x,y));
+			if(dis == 0) {
+				return;
+			}
 			//变化圆
 			for(ConstraintStruct constraintStruct : graph.getConstraintStruct()) {
 				if(constraintStruct.getConstraintType() == ConstraintType.InternallyTangentCircleOfTriangle) {

@@ -118,7 +118,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		
 		URSolver = UndoRedoSolver.getInstance();
 		
-		fileServicer = new FileService(context);
+		fileServicer = new FileService();
 		
 		keepConstrainter = KeepConstrainter.getInstance();
 		
@@ -1036,12 +1036,12 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 	
-	public void save(String name){
+	public int save(String name){
 		userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
-		fileServicer.save(graphControl.getConcurrentHashMap(), name);
+		return fileServicer.save(graphControl.getConcurrentHashMap(), name);
 	}
 	
-	public void open(String path){
+	public boolean open(String path){
 		Object temp = fileServicer.read(path);
 		if(temp != null){
 			userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
@@ -1057,13 +1057,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					isChecked = true;
 					curGraph = graph;
 					checkedGraph = graph;
-					return;
+					return true;
 	    		}
 	    	}
 	    	isEidt = false;
 			isChecked = false;
 			curGraph = null;
 			checkedGraph = null;
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

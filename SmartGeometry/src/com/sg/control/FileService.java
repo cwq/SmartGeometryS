@@ -25,13 +25,23 @@ public class FileService {
 	
 	private static final String SUFFIX = ".sg";
 	private static final String MYFILE = "/SG";
-	private Context context;
+//	private Context context;
+//	
+//	public FileService(Context context) {
+//		this.context = context;
+//	}
 	
-	public FileService(Context context) {
-		this.context = context;
+	public FileService() {
+		
 	}
 	
-	public void save(ConcurrentHashMap<Long,Graph> graphList, String name) {
+	/**
+	 * 1文件保存成功 2文件已存在 3文件保存失败 4sdcard不存在或写保护
+	 * @param graphList
+	 * @param name
+	 * @return
+	 */
+	public int save(ConcurrentHashMap<Long,Graph> graphList, String name) {
 		if(!name.endsWith(SUFFIX)) {   //后缀名
 			name += SUFFIX;
 		}
@@ -52,22 +62,24 @@ public class FileService {
 				if(!file.exists()) {
 					file.createNewFile();
 				}else{
-					Toast.makeText(context, "文件已存在", Toast.LENGTH_SHORT).show();
-					return;
+//					Toast.makeText(context, "文件已存在", Toast.LENGTH_SHORT).show();
+					return 2;
 				}
 //				fos = context.openFileOutput(path, Context.MODE_PRIVATE);
 				os = new ObjectOutputStream(new FileOutputStream(file));
 				os.writeObject(graphList);
 				os.flush();
 				os.close();          //读取文件流用完之后一定要记得关闭，否则就会造成内存泄露
-				Toast.makeText(context, "文件保存成功", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "文件保存成功", Toast.LENGTH_SHORT).show();
+				return 1;
 			} catch (Exception e) {
 				Log.e(e.toString(), e.toString());
-				Toast.makeText(context, "文件保存失败", Toast.LENGTH_SHORT).show();
-				return;
+//				Toast.makeText(context, "文件保存失败", Toast.LENGTH_SHORT).show();
+				return 3;
 			} 
 		}else{
-			 Toast.makeText(context, "sdcard不存在或写保护", Toast.LENGTH_SHORT).show();
+//			 Toast.makeText(context, "sdcard不存在或写保护", Toast.LENGTH_SHORT).show();
+			return 4;
 		}
 	}
 	
@@ -76,7 +88,7 @@ public class FileService {
 		ObjectInputStream in = null;
 		File file = new File(path);
 		if(!file.exists()) {     //文件不存在
-			Toast.makeText(context, "文件不存在", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(context, "文件不存在", Toast.LENGTH_SHORT).show();
 			return null;
 		}
 			
@@ -86,10 +98,10 @@ public class FileService {
 			in.close();          //读取文件流用完之后一定要记得关闭，否则就会造成内存泄露
 		} catch (Exception e) {
 			Log.e(e.toString(), e.toString());
-			Toast.makeText(context, "文件读取失败", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(context, "文件读取失败", Toast.LENGTH_SHORT).show();
 			return null;
 		}
-		Toast.makeText(context, "文件读取成功", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(context, "文件读取成功", Toast.LENGTH_SHORT).show();
 		return object;
 	}
 }

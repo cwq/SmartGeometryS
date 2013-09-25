@@ -144,7 +144,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     	case FILE_EXPLORER_REQUEST:
     		if(resultCode == RESULT_OK) {
     			String path = data.getStringExtra("path");
-        		mainView.open(path);
+        		if(mainView.open(path)) {
+        			Toast.makeText(this, "文件读取成功", Toast.LENGTH_SHORT).show();
+        		} else {
+        			Toast.makeText(this, "文件读取失败", Toast.LENGTH_SHORT).show();
+        		}
     		}
     		break;
     	case CONNECT_DEVICE_REQUEST:
@@ -240,7 +244,19 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     		public void onClick(DialogInterface dialog, int whichButton) {
     			EditText nameText = (EditText) saveForm.findViewById(R.id.editName);
     			String name = nameText.getText().toString();
-    			mainView.save(name);
+    			int state = mainView.save(name);
+    			if(state == 1) {
+    				Toast.makeText(MainActivity.this, "文件保存成功", Toast.LENGTH_SHORT).show();
+    			}
+    			if(state == 2) {
+    				Toast.makeText(MainActivity.this, "文件已存在", Toast.LENGTH_SHORT).show();
+    			}
+    			if(state == 3) {
+    				Toast.makeText(MainActivity.this, "文件保存失败", Toast.LENGTH_SHORT).show();
+    			}
+    			if(state == 4) {
+    				Toast.makeText(MainActivity.this, "sdcard不存在或写保护", Toast.LENGTH_SHORT).show();
+    			}
     		}
     	});
     	builder.setNegativeButton("取消", new DialogInterface.OnClickListener(){

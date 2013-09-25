@@ -124,7 +124,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		
 		//mSynchronousThread = synchronousThread;
 		
-		userIntentionReasoning = new UserIntentionReasoning(context, regulariser, constrainter, keepConstrainter, URSolver);
+		userIntentionReasoning = new UserIntentionReasoning(context, regulariser, constrainter, keepConstrainter, URSolver, graphControl);
 		
 //		color = Color.BLACK; // 画笔颜色
 //		width = 3; // 画笔宽度
@@ -136,6 +136,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 
 		//2012-8-26 onion
 		magnifier = new Magnifier();
+		
+		//撤销恢复文件保存位置
+		UndoRedoStruct.setAppPath(context.getFilesDir().getAbsolutePath());
 	}
 	
 	protected void initSynchronousThread(SynchronousThread synchronousThread) {
@@ -159,6 +162,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		//2012-8-26 onion
 		CommonFunc.setDriverBound(this.getWidth(), this.getHeight());
 		magnifier.Init();
+		
 	}
 
 	@Override
@@ -229,8 +233,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			
 			//2012-8-26 onion
 			magnifier.CollectPoint((int)event.getX(), (int)event.getY());
-			if(event.getAction()==MotionEvent.ACTION_UP)
-				magnifier.EndShow();				
+			if(event.getAction()==MotionEvent.ACTION_UP) {
+				magnifier.EndShow();
+			}
 			//invalidate();	//调用完上面的一定要调用这个
 			
 			singleTouch(event);
@@ -377,6 +382,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					}
 				}
 				//URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, curGraph.clone()));  //改变图形，undo栈添加
+				URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
 				URSolver.RedoStackClear(); //清空redo
 				collector.release(); // 释放收集器
 				break;
@@ -460,6 +466,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //						}
 					}
 					//URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
+					URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
 					//cai 2013.4.22
 //					if(mSynchronousThread.isStart()) {
 //						//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
@@ -484,7 +491,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //							if(mSynchronousThread.isStart()) {
 //								mSynchronousThread.writeDisselectGraph(graphControl.getConstraintGraphs(checkedGraph));
 //							}
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
+//							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 						}
 //						//cai 2013.4.24
 //						if(mSynchronousThread.isStart()) {
@@ -495,7 +502,8 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						curGraph = graph;
 						checkedGraph = graph;
 						collector.release(); // 释放收集器
-						URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, curGraph.clone())); //改变图形，undo栈添加
+//						URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, curGraph.clone())); //改变图形，undo栈添加
+						URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
 						URSolver.RedoStackClear(); //清空redo
 						//选中图形后显示用户意图推测
 						userIntentionReasoning.regulariseReasoning(this, graph, touchX, touchY);
@@ -530,7 +538,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //					if(mSynchronousThread.isStart()) {
 //						mSynchronousThread.writeDisselectGraph(graphControl.getConstraintGraphs(checkedGraph));
 //					}
-					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
+//					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, checkedGraph.clone())); //改变图形，undo栈添加
 					//如果在选中图形外点一点 则识别为撤销选中
 					if(penInfo.isFixedPoint()){
 						URSolver.RedoStackClear(); //清空redo
@@ -541,6 +549,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 						if(mSynchronousThread.isStart()) {
 							mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
 						}
+						URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
 						break;
 					}
 					//如果是删除手势
@@ -556,7 +565,9 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 //						graphControl.deleteGraph(checkedGraph);
 						graphControl.deleteConstraintedGraph(checkedGraph, 0);
 						
-						URSolver.EnUndoStack(new UndoRedoStruct(OperationType.DELETE, checkedGraph.clone())); //改变图形，undo栈添加
+//						URSolver.EnUndoStack(new UndoRedoStruct(OperationType.DELETE, checkedGraph.clone())); //改变图形，undo栈添加
+						URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
+						
 						URSolver.RedoStackClear(); //清空redo
 						curGraph = null;
 						checkedGraph = null;
@@ -599,6 +610,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 					//mSynchronousThread.sendMessage("AU" + touchX +"," + touchY + "EZ");
 					mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
 				}
+				URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
 				URSolver.RedoStackClear(); //清空redo
 				curGraph = null;
 				checkedGraph = null;
@@ -774,9 +786,11 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
     	curGraph = null;
     	checkedGraph = null;
     	//isFirstUndoDelete = true;
+    	
+    	graphControl.clearGraph();
     	URSolver.RedoStackClear();  //清空reod undo栈
     	URSolver.UndoStackClear();
-    	graphControl.clearGraph();
+//    	URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
     }
     
 	public void Undo() {
@@ -786,254 +800,18 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			Log.v("Undo", "empty");
 			return;	
 		}
-		UndoRedoStruct temp;
-		temp = URSolver.popUndoStack();
-		Graph tempGraph;
-		tempGraph = temp.getGraph();
-		switch(temp.getOperationType())
-		{
-		case NONE:
-			break;
-		case CREATE:
-			for(Graph graph : graphControl.getGraphList()){
-				if(tempGraph.getID() == graph.getID()){
-
-					graphControl.deleteGraph(graph);
-					//Log.v("undo", graphList.size() + "");
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeDeleteGraph(graph);
-					}
-					return;
-				}
-			}
-			break;
-		case CHANGE:
-			for(Graph graph : graphControl.getGraphList()){
-				if(tempGraph.getID() == graph.getID()){
-						tempGraph = URSolver.getFrontGraph(graph);
-						if(tempGraph != null){
-							Log.v("恢复改变之前图形", "恢复改变之前图形");
-							tempGraph = tempGraph.clone();
-							//graphList.add(tempGraph); //添加约束,选中前的图形
-							graphControl.replaceGraph(tempGraph);
-//							//cai 2013.4.22
-//							if(mSynchronousThread.isStart()) {
-//								mSynchronousThread.writeGraph(tempGraph);
-//							}
-							if(tempGraph.isChecked()){  //如果添加的图形是选中的图形
-								isEidt = true;
-								isChecked = true;
-								curGraph = tempGraph;
-								checkedGraph = tempGraph;
-							}else{
-								isEidt = false;  //如果添加的图形不是选中的图形
-								isChecked = false;
-								curGraph = null;
-								checkedGraph = null;
-							}
-						}
-					//graphList.remove(graph);
-					//graphControl.deleteGraph(graph);
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeDeleteGraph(graph);
-						if (tempGraph != null) {
-							mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-						}
-					}
-					//Log.v("undo", graphList.size() + "");
-					return;
-				}
-			}
-			break;
-		case DELETE:
-			//删除图形后撤销
-			//if(tempGraph != null){
-				Log.v("删除图形后撤销", "删除图形后撤销");
-
-				tempGraph = tempGraph.clone();
-				//graphList.add(tempGraph); //添加被删除的图形
-				graphControl.addGraph(tempGraph);
-				//cai 2013.4.22
-				if(mSynchronousThread.isStart()) {
-					mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-				}
-				if(tempGraph.isChecked()){  //如果添加的图形是选中的图形
-					isEidt = true;
-					isChecked = true;
-					curGraph = tempGraph;
-					checkedGraph = tempGraph;
-				}else{
-					isEidt = false;  //如果添加的图形不是选中的图形
-					isChecked = false;
-					curGraph = null;
-					checkedGraph = null;
-				}
-				break;
-			//}
-		case MOVEANDCONSTRAIN:
-			for(Graph graph : graphControl.getGraphList()){
-				if(tempGraph.getID() == graph.getID()){
-						tempGraph = URSolver.getFrontGraph(graph);
-						if(tempGraph != null){
-							Log.v("恢复动态约束前的图形", "恢复动态约束前的图形");
-							tempGraph = tempGraph.clone();
-							//graphList.add(tempGraph); //添加约束前的图形
-							graphControl.replaceGraph(tempGraph);
-//							//cai 2013.4.22
-//							if(mSynchronousThread.isStart()) {
-//								mSynchronousThread.writeGraph(tempGraph);
-//							}
-						}
-					//graphList.remove(graph);
-					//graphControl.deleteGraph(graph);
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeDeleteGraph(graph);
-						if (tempGraph != null) {
-							mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-						}
-					}
-					tempGraph = URSolver.peekUndoStack().getGraph().clone();  //添加动态约束前选择的图形
-					isEidt = true;
-					isChecked = true;
-					curGraph = tempGraph;
-					checkedGraph = tempGraph;
-					//graphList.add(tempGraph);
-					graphControl.addGraph(tempGraph);
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-					}
-					//Log.v("undo", graphList.size() + "");
-					return;
-				}
-			}
-			break;
-		default:
-			break;
-		}
+		UndoRedoStruct temp = URSolver.popUndoStack();
+		open(temp.getPath(), true);
 	}	
 	
 	public void Redo() {
+		userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
 		if(URSolver.isRedoStackEmpty()) {
 			Log.v("Redo", "empty");	
 			return;	
 		}
-		userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
-		UndoRedoStruct temp;
-		temp = URSolver.popRedoStack();
-		Graph tempGraph;
-		tempGraph = temp.getGraph();
-		switch(temp.getOperationType())
-		{
-		case NONE:
-			break;
-		case CREATE:
-
-			tempGraph = tempGraph.clone();
-			if(tempGraph.isChecked()){  //如果要恢复的图形是选中的图形
-				isEidt = true;
-				isChecked = true;
-				curGraph = tempGraph;
-				checkedGraph = tempGraph;
-			}else{
-				isEidt = false;  //如果添加的图形不是选中的图形
-				isChecked = false;
-				curGraph = null;
-				checkedGraph = null;
-			}
-			//graphList.add(tempGraph);
-			graphControl.addGraph(tempGraph);
-			//cai 2013.4.22
-			if(mSynchronousThread.isStart()) {
-				mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-			}
-			//Log.v("redo", graphList.size() + "");
-			break;
-		case CHANGE:
-			for(Graph graph : graphControl.getGraphList()){
-				if(tempGraph.getID() == graph.getID()){
-					//graphList.remove(graph);
-					//graphControl.deleteGraph(graph);
-//					//cai 2013.4.22
-//					if(mSynchronousThread.isStart()) {
-//						mSynchronousThread.writeDeleteGraph(graph);
-//					}
-					tempGraph = tempGraph.clone();
-					if(tempGraph.isChecked()){  //如果要恢复的图形是选中的图形
-						isEidt = true;
-						isChecked = true;
-						curGraph = tempGraph;
-						checkedGraph = tempGraph;
-					}else{
-						isEidt = false;  //如果添加的图形不是选中的图形
-						isChecked = false;
-						curGraph = null;
-						checkedGraph = null;
-					}
-					//graphList.add(tempGraph);
-					//graphControl.addGraph(tempGraph);
-					graphControl.replaceGraph(tempGraph);
-					//Log.v("redo", graphList.size() + "");
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-					}
-					return;
-				}
-			}
-			break;
-		case DELETE:
-			for(Graph graph : graphControl.getGraphList()){
-				if(tempGraph.getID() == graph.getID()){
-					Log.v("恢复删除操作", "恢复删除操作");
-					//graphList.remove(graph);
-					graphControl.deleteGraph(graph);
-					isEidt = false;
-					isChecked = false;
-					curGraph = null;
-					checkedGraph = null;
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.writeDeleteGraph(graph);
-					}
-					return;
-				}
-			}
-			break;
-		case MOVEANDCONSTRAIN:
-			for(Graph graph : graphControl.getGraphList()){
-				if(tempGraph.getID() == graph.getID()){
-					//graphList.remove(graph);
-					//graphList.remove(curGraph);  //删除之前移动的约束的图形
-					graphControl.deleteGraph(graph);
-					graphControl.deleteGraph(curGraph);
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						//mSynchronousThread.writeDeleteGraph(graph);
-						mSynchronousThread.writeDeleteGraph(curGraph);
-					}
-					tempGraph = tempGraph.clone();
-					isEidt = false;  //如果添加的图形不是选中的图形
-					isChecked = false;
-					curGraph = null;
-					checkedGraph = null;
-					//graphList.add(tempGraph);
-					graphControl.addGraph(tempGraph);
-					//cai 2013.4.22
-					if(mSynchronousThread.isStart()) {
-						mSynchronousThread.sendMessage(graphControl.getConstraintGraphs(tempGraph));
-					}
-					//Log.v("redo", graphList.size() + "");
-					return;
-				}
-			}
-			break;
-		default:
-			break;
-		}
+		UndoRedoStruct temp = URSolver.popRedoStack();
+		open(temp.getPath(), true);
 	}
 	
 	public int save(String name){
@@ -1041,13 +819,16 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		return fileServicer.save(graphControl.getConcurrentHashMap(), name);
 	}
 	
-	public boolean open(String path){
+	public boolean open(String path, boolean isUndo){
 		Object temp = fileServicer.read(path);
 		if(temp != null){
 			userIntentionReasoning.dismiss(); //如果没点选图标，则popupwindow消失
 			graphControl.setConcurrentHashMap((ConcurrentHashMap<Long,Graph>)temp);
-			URSolver.RedoStackClear();  //清空reod undo栈
-	    	URSolver.UndoStackClear();
+			if(!isUndo) {
+				URSolver.RedoStackClear();  //清空reod undo栈
+		    	URSolver.UndoStackClear();
+//				URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
+			}
 			if(mSynchronousThread.isStart()) {
 				sendGraphList();
 			}

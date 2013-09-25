@@ -5,6 +5,7 @@ package com.sg.transformation.computeagent;
 import java.util.List;
 
 import com.sg.bluetooth.SynchronousThread;
+import com.sg.control.GraphControl;
 import com.sg.control.OperationType;
 import com.sg.control.UndoRedoSolver;
 import com.sg.control.UndoRedoStruct;
@@ -39,13 +40,16 @@ public class UserIntentionReasoning {
 	
 	//2013.2.22 cai bluetooth
     private SynchronousThread mSynchronousThread;
+    
+    private GraphControl graphControl;
 	
 	public UserIntentionReasoning(Context context, Regulariser regulariser, 
-			Constrainter constrainter, KeepConstrainter keepConstrainter, UndoRedoSolver URSolver) {
+			Constrainter constrainter, KeepConstrainter keepConstrainter, UndoRedoSolver URSolver, GraphControl graphControl) {
 		this.context = context;
 		this.regulariser = regulariser;
 		this.keepConstrainter = keepConstrainter;
 		this.URSolver = URSolver;
+		this.graphControl = graphControl;
 		linearCloseConstraint = new LinearCloseConstraint();
 		mLayoutInflater = (LayoutInflater) 
 				this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -70,7 +74,7 @@ public class UserIntentionReasoning {
 							myGraph.setRightAngleToF();
 							changeToIsocelesTri(myGraph);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -108,7 +112,7 @@ public class UserIntentionReasoning {
 							}
 							Log.v("直角三角形","意图推测");
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap());; //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -148,7 +152,7 @@ public class UserIntentionReasoning {
 							}
 							Log.v("等腰直角三角形","意图推测");
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -170,7 +174,7 @@ public class UserIntentionReasoning {
 									(PointUnit)(myGraph.getGraph().get(4)));
 							Log.v("等边三角形","意图推测");
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();//cai 2013.4.22 蓝牙传输
@@ -196,7 +200,7 @@ public class UserIntentionReasoning {
 							((PointUnit)(myGraph.getGraph().get(6))).setX((int)(Math.round(((PointUnit)(myGraph.getGraph().get(0))).getX()+((PointUnit)(myGraph.getGraph().get(4))).getX()-((PointUnit)(myGraph.getGraph().get(2))).getX())));
 							((PointUnit)(myGraph.getGraph().get(6))).setY((int)(Math.round(((PointUnit)(myGraph.getGraph().get(0))).getY()+((PointUnit)(myGraph.getGraph().get(4))).getY()-((PointUnit)(myGraph.getGraph().get(2))).getY())));
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -221,7 +225,7 @@ public class UserIntentionReasoning {
 							((PointUnit)(myGraph.getGraph().get(4))).setRightAngle(true);
 							((PointUnit)(myGraph.getGraph().get(6))).setRightAngle(true);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -247,7 +251,7 @@ public class UserIntentionReasoning {
 							((PointUnit)(myGraph.getGraph().get(4))).setRightAngle(true);
 							((PointUnit)(myGraph.getGraph().get(6))).setRightAngle(true);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -276,7 +280,7 @@ public class UserIntentionReasoning {
 							((PointUnit)(myGraph.getGraph().get(6))).setEqualAngle(true);
 							Log.v("等边三角形","意图推测");
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -332,7 +336,7 @@ public class UserIntentionReasoning {
 								}
 							}
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -396,7 +400,7 @@ public class UserIntentionReasoning {
 								}
 							}
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -468,7 +472,7 @@ public class UserIntentionReasoning {
 								}
 							}
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							mPop.dismiss();
 							//cai 2013.4.22 蓝牙传输
@@ -505,7 +509,7 @@ public class UserIntentionReasoning {
 						{
 							linearCloseConstraint.changeToVerticalLine(myGraph);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -523,7 +527,7 @@ public class UserIntentionReasoning {
 						{
 							linearCloseConstraint.changeToAngleBisector(myGraph);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -540,7 +544,7 @@ public class UserIntentionReasoning {
 						{
 							linearCloseConstraint.changeToMidLine(myGraph);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();
@@ -557,7 +561,7 @@ public class UserIntentionReasoning {
 						{
 							linearCloseConstraint.changeToCommonLine(myGraph);
 							keepConstrainter.keepConstraint(myGraph); //约束保持
-							URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, myGraph.clone())); //改变图形，undo栈添加
+							URSolver.EnUndoStack(graphControl.getConcurrentHashMap()); //改变图形，undo栈添加
 							URSolver.RedoStackClear(); //清空redo
 							// 关闭Popup窗口
 							mPop.dismiss();

@@ -112,13 +112,13 @@ public class Constrainter {
 			if(temp == null)
 				temp = constraintGraph;
 			keepConstrainter.keepConstraint(temp);
-			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系
-//				temp.setChecked(false);
-//				graphControl.checkedGraph(temp, 0, false);
-				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
-			}else{
-				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));
-			}
+//			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系
+////				temp.setChecked(false);
+////				graphControl.checkedGraph(temp, 0, false);
+//				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
+//			}else{
+//				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));
+//			}
 			Log.v("有约束", "有约束");
 			return temp;
 		}
@@ -210,29 +210,32 @@ public class Constrainter {
 			if(temp == null)
 				temp = constraintGraph;
 			keepConstrainter.keepConstraint(temp);
-			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系，则需删除curGraph
-//				temp.setChecked(false);
-				graphControl.checkedGraph(temp, 0, false);
-				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
-			}else{
-				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));
+			if(curGraph.isChecked()){ 
+				curGraph.setChecked(false);
 			}
+//			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系，则需删除curGraph
+////				temp.setChecked(false);
+//				graphControl.checkedGraph(temp, 0, false);
+//				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.MOVEANDCONSTRAIN, temp.clone()));
+//			}else{
+//				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, temp.clone()));
+//			}
 			Log.v("有约束", "有约束");
 			return temp;
 		}else{                        //如果没有约束关系
-			if(!curGraph.isChecked()) {            //如果curGraph没被选中，即是刚画上去的，则在图形链表添加
-				//if(curGraph instanceof Sketch){
-				//	URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CREATE, curGraph));
-				//}else{
-				//cai 2013.8.29 ?
-//				if (curGraph instanceof Sketch) {
-//					curGraph.setID(GUnit.getStaticID());
-//				}
-					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CREATE, curGraph.clone()));
-				//}
-			}else{
-				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, curGraph.clone()));
-			}
+//			if(!curGraph.isChecked()) {            //如果curGraph没被选中，即是刚画上去的，则在图形链表添加
+//				//if(curGraph instanceof Sketch){
+//				//	URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CREATE, curGraph));
+//				//}else{
+//				//cai 2013.8.29 ?
+////				if (curGraph instanceof Sketch) {
+////					curGraph.setID(GUnit.getStaticID());
+////				}
+//					URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CREATE, curGraph.clone()));
+//				//}
+//			}else{
+//				URSolver.EnUndoStack(new UndoRedoStruct(OperationType.CHANGE, curGraph.clone()));
+//			}
 			Log.v("没有约束", "没有约束");
 			return null;
 		}

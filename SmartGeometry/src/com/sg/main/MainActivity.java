@@ -112,7 +112,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         if(Intent.ACTION_VIEW.equals(action)){
         	Uri uri = (Uri) intent.getData();
         	String path = uri.getPath();
-        	mainView.open(path);
+        	mainView.open(path, false);
         } 
     }
     
@@ -144,7 +144,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     	case FILE_EXPLORER_REQUEST:
     		if(resultCode == RESULT_OK) {
     			String path = data.getStringExtra("path");
-        		if(mainView.open(path)) {
+        		if(mainView.open(path, false)) {
         			Toast.makeText(this, "文件读取成功", Toast.LENGTH_SHORT).show();
         		} else {
         			Toast.makeText(this, "文件读取失败", Toast.LENGTH_SHORT).show();

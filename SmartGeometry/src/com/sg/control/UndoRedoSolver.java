@@ -4,7 +4,14 @@
  * */
 package com.sg.control;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
+
+import android.util.Log;
 
 import com.sg.object.graph.Graph;
 
@@ -14,18 +21,38 @@ public class UndoRedoSolver {
 	private Stack<UndoRedoStruct> UndoStack;
 	private Stack<UndoRedoStruct> RedoStack;
 
-	public UndoRedoSolver(){
+	private UndoRedoSolver(){
 		UndoStack = new Stack<UndoRedoStruct>();
 		RedoStack = new Stack<UndoRedoStruct>();
 	}
 
-	public void EnUndoStack(UndoRedoStruct data){
+	public void EnUndoStack(ConcurrentHashMap<Long,Graph> graphList){
+		UndoRedoStruct data = new UndoRedoStruct();
 		UndoStack.push(data);
+		Log.v("UndoStack", UndoStack.size() + "");
+		saveFile(data, graphList);
 	}
 	
-	public void EnRedoStack(UndoRedoStruct data){
-		RedoStack.push(data);
+	private void saveFile(UndoRedoStruct data, ConcurrentHashMap<Long,Graph> graphList) {
+		File file = new File(data.getPath());
+		try {
+			if(file.exists()) {
+				file.delete();
+			}
+			file.createNewFile();
+			ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file));
+			os.writeObject(graphList);
+			os.flush();
+			os.close(); 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+	
+//	public void EnRedoStack(UndoRedoStruct data){
+//		RedoStack.push(data);
+//	}
 	
 	public UndoRedoStruct popUndoStack() {
 		RedoStack.push(UndoStack.peek());
@@ -46,11 +73,21 @@ public class UndoRedoSolver {
 	}
 
 	public void RedoStackClear() {
-		RedoStack.clear();		
+		deleteFile(RedoStack);
+		RedoStack.clear();
 	}
 	
 	public void UndoStackClear() {
+		deleteFile(UndoStack);
 		UndoStack.clear();		
+	}
+	
+	private void deleteFile(Stack<UndoRedoStruct> stack) {
+		File file;
+		for (UndoRedoStruct struct : stack) {
+			file = new File(struct.getPath());
+			file.delete();
+		}
 	}
 
 	public boolean isRedoStackEmpty() {
@@ -61,24 +98,24 @@ public class UndoRedoSolver {
 		return UndoStack.empty();
 	}
 	
-	public Graph getFrontGraph(Graph graph){
-		Graph temp = null;
-		//找到改变前的图形
-		/*
-		for(UndoRedoStruct struct : UndoStack){
-			if(struct.getGraph().getID() == graph.getID()){
-				temp = struct.getGraph();
-			}
-		}
-		*/
-		//不需要全遍历一遍，只要从后向前找到第一个即可
-		int num = UndoStack.size();
-		for(int index = num - 1; index >= 0; index--){
-			temp = UndoStack.get(index).getGraph();
-			if(temp.getID() == graph.getID()){
-				return temp;
-			}
-		}
-		return temp;
-	}
+//	public Graph getFrontGraph(Graph graph){
+//		Graph temp = null;
+//		//找到改变前的图形
+//		/*
+//		for(UndoRedoStruct struct : UndoStack){
+//			if(struct.getGraph().getID() == graph.getID()){
+//				temp = struct.getGraph();
+//			}
+//		}
+//		*/
+//		//不需要全遍历一遍，只要从后向前找到第一个即可
+//		int num = UndoStack.size();
+//		for(int index = num - 1; index >= 0; index--){
+//			temp = UndoStack.get(index).getGraph();
+//			if(temp.getID() == graph.getID()){
+//				return temp;
+//			}
+//		}
+//		return temp;
+//	}
 }

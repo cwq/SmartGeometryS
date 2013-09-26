@@ -801,7 +801,17 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			return;	
 		}
 		UndoRedoStruct temp = URSolver.popUndoStack();
-		open(temp.getPath(), true);
+		if(!URSolver.isUndoStackEmpty()) {
+			temp = URSolver.peekUndoStack();
+			open(temp.getPath(), true);
+		} else {
+			isEidt = false;
+	    	isChecked = false;
+	    	curGraph = null;
+	    	checkedGraph = null;
+	    	graphControl.clearGraph();
+		}
+		sendGraphList();
 	}	
 	
 	public void Redo() {
@@ -812,6 +822,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 		UndoRedoStruct temp = URSolver.popRedoStack();
 		open(temp.getPath(), true);
+		sendGraphList();
 	}
 	
 	public int save(String name){
@@ -827,7 +838,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback,
 			if(!isUndo) {
 				URSolver.RedoStackClear();  //清空reod undo栈
 		    	URSolver.UndoStackClear();
-//				URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
+				URSolver.EnUndoStack(graphControl.getConcurrentHashMap());
 			}
 			if(mSynchronousThread.isStart()) {
 				sendGraphList();

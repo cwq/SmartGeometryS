@@ -211,7 +211,7 @@ public class Constrainter {
 				temp = constraintGraph;
 			keepConstrainter.keepConstraint(temp);
 			if(curGraph.isChecked()){ 
-				curGraph.setChecked(false);
+				graphControl.checkedGraph(curGraph, 0, false);
 			}
 //			if(curGraph.isChecked()){                     //如果curGraph是选中的图形 于其他图形有约束关系，则需删除curGraph
 ////				temp.setChecked(false);

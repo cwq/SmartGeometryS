@@ -144,14 +144,15 @@ public class Stroke {
 		pList.get(n-1).increaseTotal();
 	}
 	
-	/*
+	/**
 	 * 对系列电进一步处理
 	 * */
 	public void space(List<Point> pList) {
 		int n = pList.size();
 		
-			for(int i = 1; i < n; i++) {
-				if( pList.get(i).getTotal() >= 2 ) {      //去除起始点附近的噪点
+			for(int i = 1; i < n-1; i++) {
+				if( pList.get(i).getTotal() >= 2 ) {
+					//去除起始点附近的噪点
 					for(int j = i-1; j >= 0; j--) {
 						if(pList.get(j).getTotal() >= 2 && 
 								CommonFunc.distance(pList.get(i),pList.get(j)) <= 
@@ -159,6 +160,12 @@ public class Stroke {
 							pList.get(i).increaseTotal(-1);
 						}
 					}
+				}
+				if((pList.get(i).getTotal() >= 2) && 
+						(CommonFunc.distance(pList.get(i),pList.get(n -1)) <=
+						ThresholdProperty.TWO_POINT_IS_CLOSED)){
+					//处理末尾附近点的冗余
+					pList.get(i).increaseTotal(-1);
 				}
 			}	
 		}
@@ -189,7 +196,7 @@ public class Stroke {
 		List<Integer> specialPointIndexsForDelete = new ArrayList<Integer>();
 		int n = pList.size();
 		for(int i=0; i < n; i++) {
-			if(pList.get(i).getTotal() >= 3) {    
+			if(pList.get(i).getTotal() >= 2) {    
 				specialPointIndexsForDelete.add(i);
 			}
 		}
